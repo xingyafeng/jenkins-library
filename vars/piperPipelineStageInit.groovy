@@ -72,7 +72,12 @@ void call(Map parameters = [:]) {
 	echo "[MARCUSHOLL] after Init stash configuration"
 
         setGitUrlsOnCommonPipelineEnvironment(script, scmInfo.GIT_URL)
+
+	echo "[MARCUSHOLL] after setting git url"
+        
         script.commonPipelineEnvironment.setGitCommitId(scmInfo.GIT_COMMIT)
+
+        echo "[MARCUSHOLL] after setting git commit id"
 
         if (config.verbose) {
             echo "piper-lib-os  configuration: ${script.commonPipelineEnvironment.configuration}"
