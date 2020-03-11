@@ -150,6 +150,7 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
 
     echo "[MARCUSHOLL] entering setGitUrlsOnCommonPipelineEnvironment"
 
+    try {
     def urlMatcher = gitUrl =~ /^((http|https|git|ssh):\/\/)?((.*)@)?([^:\/]+)(:([\d]*))?(\/?(.*))$/
 
     def protocol = urlMatcher[0][2]
@@ -185,6 +186,11 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     }
     script.commonPipelineEnvironment.setGithubOrg(gitFolder)
     script.commonPipelineEnvironment.setGithubRepo(gitRepo)
+    } catch (Throwable thr) {
+    echo "[MARCUSHOLL] caught ${thr}"
+    throw thr
+    }
+
     echo "[MARCUSHOLL] exiting setGitUrlsOnCommonPipelineEnvironment"
 }
 
