@@ -28,6 +28,8 @@ class Telemetry implements Serializable{
     }
 
     static notify(Script steps, Map config, Map payload){
+
+/*
         //allow opt-out via configuration
         if (!config?.collectTelemetryData) {
             steps.echo "[${payload.step}] Sending telemetry data is disabled."
@@ -42,6 +44,8 @@ class Telemetry implements Serializable{
                 steps.echo "[${payload.step}] Telemetry Report with listener failed: ${ignore.getMessage()}"
             }
         }
+
+*/
     }
 
     protected static void piperOsDefaultReporting(Script steps, Map payload) {
