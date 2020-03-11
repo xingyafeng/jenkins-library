@@ -148,6 +148,8 @@ private void initStashConfiguration (script, config) {
 
 private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
 
+    echo "[MARCUSHOLL] entering setGitUrlsOnCommonPipelineEnvironment"
+
     def urlMatcher = gitUrl =~ /^((http|https|git|ssh):\/\/)?((.*)@)?([^:\/]+)(:([\d]*))?(\/?(.*))$/
 
     def protocol = urlMatcher[0][2]
@@ -183,6 +185,7 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     }
     script.commonPipelineEnvironment.setGithubOrg(gitFolder)
     script.commonPipelineEnvironment.setGithubRepo(gitRepo)
+    echo "[MARCUSHOLL] exiting setGitUrlsOnCommonPipelineEnvironment"
 }
 
 private void setPullRequestStageStepActivation(script, config, List actions) {
