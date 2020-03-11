@@ -64,8 +64,12 @@ void call(Map parameters = [:]) {
             .withMandatoryProperty('buildTool')
             .use()
 
+	echo "[MARCUSHOLL] before Init stash configuration"
         //perform stashing based on libray resource piper-stash-settings.yml if not configured otherwise
         initStashConfiguration(script, config)
+
+        
+	echo "[MARCUSHOLL] after Init stash configuration"
 
         setGitUrlsOnCommonPipelineEnvironment(script, scmInfo.GIT_URL)
         script.commonPipelineEnvironment.setGitCommitId(scmInfo.GIT_COMMIT)
@@ -75,9 +79,9 @@ void call(Map parameters = [:]) {
         }
 
         // telemetry reporting
-        utils.pushToSWA([step: STEP_NAME], config)
+        //utils.pushToSWA([step: STEP_NAME], config)
 
-        echo "[MARCUSHOLL] before checking buld tool"
+        echo "[MARCUSHOLL] before checking build tool"
 
         checkBuildTool(config)
 
