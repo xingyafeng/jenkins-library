@@ -40,6 +40,8 @@ import static com.sap.piper.Prerequisites.checkScript
 @GenerateStageDocumentation(defaultStageName = 'Init')
 void call(Map parameters = [:]) {
 
+    echo "[MARCUSHOLL] inside init stage."
+
     def script = checkScript(this, parameters) ?: this
     def utils = parameters.juStabUtils ?: new Utils()
 
@@ -49,6 +51,8 @@ void call(Map parameters = [:]) {
         def scmInfo = checkout scm
 
         setupCommonPipelineEnvironment script: script, customDefaults: parameters.customDefaults
+
+	echo "[MARCUSHOLL] after setup CPE"
 
         Map config = ConfigurationHelper.newInstance(this)
             .loadStepDefaults()
@@ -72,6 +76,8 @@ void call(Map parameters = [:]) {
 
         // telemetry reporting
         utils.pushToSWA([step: STEP_NAME], config)
+
+        echo "[MARCUSHOLL] before checking buld tool"
 
         checkBuildTool(config)
 
