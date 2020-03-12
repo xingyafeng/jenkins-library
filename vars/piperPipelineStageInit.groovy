@@ -188,6 +188,7 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     script.commonPipelineEnvironment.setGithubRepo(gitRepo)
     } catch (Throwable thr) {
     echo "[MARCUSHOLL] caught ${thr}"
+    thr.printStackTrace()
     throw thr
     }
 
