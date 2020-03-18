@@ -172,14 +172,14 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     script.echo "[MARCUS] github org: ${script.commonPipelineEnvironment.getGithubOrg()}"
     script.echo "[MARCUS] github repo: ${script.commonPipelineEnvironment.getGithubRepo()}"
 
-    script.echo "[INFO] no throwable caught ..."
+    script.echo "[INFO] no throwable caught inside setGitUrlsOnCommonPipelineEnvironment ..."
     } catch(Throwable thr) {
 
       StringWriter sw = new StringWriter()
       PrintWriter pw = new PrintWriter(sw)
 
       thr.printStackTrace(pw)
-      script.echo "CAUGHT: ${sw}"
+      script.echo "setGitUrlsOnCommonPipelineEnvironment CAUGHT: ${sw}"
       throw thr
     }
 
