@@ -166,8 +166,8 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     script.echo "[INFO] no throwable caught ..."
     } catch(Throwable thr) {
 
-      StringWriter sw = new StringWriter();
-      PrintWriter pw = new PrintWriter(sw);
+      StringWriter sw = new StringWriter()
+      PrintWriter pw = new PrintWriter(sw)
 
       thr.printStackTrace(pw)
       script.echo "CAUGHT: ${sw}"
