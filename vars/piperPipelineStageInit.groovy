@@ -132,6 +132,7 @@ private void initStashConfiguration (script, config) {
     script.commonPipelineEnvironment.configuration.stageStashes = stashConfiguration
 }
 
+@NonCPS
 private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
 
     Map url = parseUrl(gitUrl)
