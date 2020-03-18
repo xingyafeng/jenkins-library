@@ -166,8 +166,8 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     script.commonPipelineEnvironment.setGithubOrg(gitFolder)
     script.commonPipelineEnvironment.setGithubRepo(gitRepo)
 
-    script.echo "[MARCUS] github org: ${script.commonPipelineEnvironment.getGitSshUrl()}"
-    script.echo "[MARCUS] github org: ${script.commonPipelineEnvironment.getGitHttpsUrl()}"
+    script.echo "[MARCUS] git ssh url: ${script.commonPipelineEnvironment.getGitSshUrl()}"
+    script.echo "[MARCUS] git https url: ${script.commonPipelineEnvironment.getGitHttpsUrl()}"
 
     script.echo "[MARCUS] github org: ${script.commonPipelineEnvironment.getGithubOrg()}"
     script.echo "[MARCUS] github repo: ${script.commonPipelineEnvironment.getGithubRepo()}"
