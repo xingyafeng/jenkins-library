@@ -133,7 +133,7 @@ private void initStashConfiguration (script, config) {
 }
 
 private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
-
+    try {
     Map url = parseUrl(gitUrl)
 
     if (url.protocol in ['http', 'https']) {
@@ -163,6 +163,17 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     }
     script.commonPipelineEnvironment.setGithubOrg(gitFolder)
     script.commonPipelineEnvironment.setGithubRepo(gitRepo)
+    script.echo "[INFO] no throwable caught ..."
+    } catch(Throwable thr) {
+
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+
+      thr.printStackTrace(pw)
+      script.echo "CAUGHT: ${sw}"
+      throw thr
+    }
+
 }
 
 /*
