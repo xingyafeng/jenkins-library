@@ -133,8 +133,10 @@ private void initStashConfiguration (script, config) {
 }
 
 private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
+    script.echo "[MARCUS] Inside setGitUrlsOnCommonPipelineEnvironment: ${gitUrl}"
     try {
     Map url = parseUrl(gitUrl)
+    script.echo "[MARCUS] url parts: ${url}"
 
     if (url.protocol in ['http', 'https']) {
         script.commonPipelineEnvironment.setGitSshUrl("git@${url.host}:${url.path}")
