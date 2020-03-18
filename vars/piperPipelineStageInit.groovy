@@ -165,6 +165,13 @@ private void setGitUrlsOnCommonPipelineEnvironment(script, String gitUrl) {
     }
     script.commonPipelineEnvironment.setGithubOrg(gitFolder)
     script.commonPipelineEnvironment.setGithubRepo(gitRepo)
+
+    script.echo "github org: ${script.commonPipelineEnvironment.getGitSshUrl()}"
+    script.echo "github org: ${script.commonPipelineEnvironment.getGitHttpsUrl()}"
+
+    script.echo "github org: ${script.commonPipelineEnvironment.getGithubOrg()}"
+    script.echo "github repo: ${script.commonPipelineEnvironment.getGithubRepo()}"
+
     script.echo "[INFO] no throwable caught ..."
     } catch(Throwable thr) {
 
