@@ -48,6 +48,8 @@ void call(Map parameters = [:]) {
 
     piperStageWrapper (script: script, stageName: stageName) {
 
+        echo "[${STEP_NAME}]: config: ${config}"
+
         // telemetry reporting
         utils.pushToSWA([step: STEP_NAME], config)
 
