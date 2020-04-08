@@ -357,6 +357,8 @@ private List getContainerList(config) {
             env            : getContainerEnvs(config, imageName, config.dockerEnvVars, config.dockerWorkspace)
         ]
 
+        echo "[DEBUG] containerSpec: ${containerSpec}"
+
         def configuredCommand = config.containerCommands?.get(imageName)
         def shell = config.containerShell ?: '/bin/sh'
         if (configuredCommand == null) {
