@@ -39,8 +39,8 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
             echo "Config: ${config}"
 
             dockerWrapper(script, config) {
+                sh 'echo $SSH_AGENT_PID'
                 credentialWrapper(config, credentialInfo) {
-                    sh 'echo $SSH_AGENT_PID'
                     sh "./piper ${stepName}${defaultConfigArgs}${customConfigArg}"
                 }
                 jenkinsUtils.handleStepResults(stepName, failOnMissingReports, failOnMissingLinks)
