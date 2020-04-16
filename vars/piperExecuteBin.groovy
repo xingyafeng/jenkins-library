@@ -40,6 +40,8 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
 
             dockerWrapper(script, config) {
                 sh "printenv | sort"
+                sh "ls -a /tmp/"
+                sh "ls -a /"
                 credentialWrapper(config, credentialInfo) {
                     sh "./piper ${stepName}${defaultConfigArgs}${customConfigArg}"
                 }
