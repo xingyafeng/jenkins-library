@@ -26,7 +26,7 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
         script.commonPipelineEnvironment.writeToDisk(script)
 
         writeFile(file: ".pipeline/tmp/${metadataFile}", text: libraryResource(metadataFile))
-
+        
         withEnv([
             "PIPER_parametersJSON=${groovy.json.JsonOutput.toJson(stepParameters)}",
             //ToDo: check if parameters make it into docker image on JaaS
@@ -37,7 +37,7 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
             // get context configuration
             Map config = readJSON(text: sh(returnStdout: true, script: "./piper getConfig --contextConfig --stepMetadata '.pipeline/tmp/${metadataFile}'${defaultConfigArgs}${customConfigArg}"))
             echo "Config: ${config}"
-
+            sh "printenv | sort"
             dockerWrapper(script, config) {
                 sh "printenv | sort"
                 credentialWrapper(config, credentialInfo) {
