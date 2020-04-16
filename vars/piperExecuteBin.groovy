@@ -110,13 +110,15 @@ void credentialWrapper(config, List credentialInfo, body) {
                     if (config[cred.id]) creds.add(usernamePassword(credentialsId: config[cred.id], usernameVariable: cred.env[0], passwordVariable: cred.env[1]))
                     break
                 case "ssh":
+                    println("came to ssh cred case")
                     if (config[cred.id]) sshCreds.add(config[cred.id])
                     break
                 default:
                     error ("invalid credential type: ${cred.type}")
             }
         }
-
+        println("Thats the sshcreds size")
+        println(sshCreds.size())
         if (sshCreds.size() > 0) {
             sshagent (sshCreds) {
                 withCredentials(creds) {
