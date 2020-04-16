@@ -2,6 +2,7 @@ metadata:
   name: artifactPrepareVersion
   aliases:
     - name: artifactSetVersion
+    - name: mavenExecute
     - name: setVersion
       deprecated: true
   description: Prepares and potentially updates the artifact's version before building the artifact.
