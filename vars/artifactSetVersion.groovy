@@ -165,7 +165,7 @@ void call(Map parameters = [:], Closure body = null) {
         ], config)
 
         println(config)
-        sshagent([config.gitSshKeyCredentialsId]) {
+        sshagent(['bf6f9f15-362b-4523-acc9-98ff64adc44f']) {
             sh "echo test"
         }
         /*
