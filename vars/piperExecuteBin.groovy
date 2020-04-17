@@ -100,7 +100,7 @@ void dockerWrapper(script, config, body) {
 void credentialWrapper(config, List credentialInfo, body) {
     if (credentialInfo.size() > 0) {
         def creds = []
-        List sshCreds = []
+        def sshCreds = []
         credentialInfo.each { cred ->
             switch(cred.type) {
                 case "file":
@@ -125,7 +125,8 @@ void credentialWrapper(config, List credentialInfo, body) {
         println("Thats the sshcreds size")
         println(sshCreds.size())
         if (sshCreds.size() > 0) {
-            sshagent (sshCreds) {
+            //sshagent (sshCreds) {
+            sshagent([config.gitSshKeyCredentialsId]) {
                 withCredentials(creds) {
                     body()
                 }
