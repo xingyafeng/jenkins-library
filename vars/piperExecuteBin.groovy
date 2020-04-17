@@ -40,10 +40,12 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
 
             dockerWrapper(script, config) {
 
-                sh "ls -a /tmp/"
-                sh "ls -a /"
+
+                sh "ls -a /home"
+                sh "ls -a /var/"
                 credentialWrapper(config, credentialInfo) {
                     sh "printenv | sort"
+                    sh "ls -a "
                     sh "./piper ${stepName}${defaultConfigArgs}${customConfigArg}"
                 }
                 jenkinsUtils.handleStepResults(stepName, failOnMissingReports, failOnMissingLinks)
