@@ -12,7 +12,7 @@ void call(Map parameters = [:]) {
         [type: 'ssh', id: 'gitSshKeyCredentialsId'],
         [type: 'usernamePassword', id: 'gitHttpsCredentialsId', env: ['PIPER_username', 'PIPER_password']],
     ]
-
-    piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
-
+    withEnv(["SSH_KNOWN_HOSTS=~/.ssh/known_hosts"]) {
+        piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
+    }
 }
