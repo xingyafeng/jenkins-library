@@ -199,8 +199,12 @@ spec:
     secrets:
     - name: gitHttpsCredentialsId
       type: jenkins
+      aliases:
+        - name: gitCredentialsId
     - name: gitSshKeyCredentialsId
       type: jenkins
+      aliases:
+        - name: gitCredentialsId
   containers:
     - name: mvn
       image: maven:3.6-jdk-8
