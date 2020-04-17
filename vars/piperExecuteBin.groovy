@@ -127,10 +127,10 @@ void credentialWrapper(config, List credentialInfo, body) {
         println(sshCreds.size())
         if (sshCreds.size() > 0) {
             //sshagent (sshCreds) {
-            sshagent([config.gitSshKeyCredentialsId]) {
-                withCredentials(creds) {
+            sshagent(credentials: [config.gitSshKeyCredentialsId]) {
+                //withCredentials(creds) {
                     body()
-                }
+                //}
             }
         } else {
             withCredentials(creds) {
