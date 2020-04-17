@@ -115,7 +115,7 @@ void credentialWrapper(config, List credentialInfo, body) {
                 case "ssh":
                     println("came to ssh cred case")
                     if (config[cred.id]) sshCreds.add(config[cred.id])
-                    println(sshCreds[0])
+                    println(sshCreds)
                     break
                 default:
                     error ("invalid credential type: ${cred.type}")
