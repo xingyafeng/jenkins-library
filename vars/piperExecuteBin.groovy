@@ -100,7 +100,7 @@ void dockerWrapper(script, config, body) {
 void credentialWrapper(config, List credentialInfo, body) {
     if (credentialInfo.size() > 0) {
         def creds = []
-        def sshCreds = []
+        List sshCreds = []
         credentialInfo.each { cred ->
             switch(cred.type) {
                 case "file":
