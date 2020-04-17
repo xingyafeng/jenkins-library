@@ -117,6 +117,7 @@ void credentialWrapper(config, List credentialInfo, body) {
                     if (config[cred.id]) sshCreds.add(config[cred.id])
                     println(sshCreds[0].getClass())
                     println(sshCreds.getClass())
+                    println(config.gitSshKeyCredentialsId)
                     break
                 default:
                     error ("invalid credential type: ${cred.type}")
