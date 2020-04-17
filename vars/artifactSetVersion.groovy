@@ -281,8 +281,10 @@ void call(Map parameters = [:], Closure body = null) {
                     gitConfig = gitConfig.join(' ')
                     gitPushFlags = gitPushFlags.join(' ')
                     println("now the push")
-                    sh script:   """|#!/bin/bash ${hashbangFlags}
-                                    |${gitDebug}git ${gitConfig} push ${gitPushFlags} ${gitUrlWithCredentials} ${config.tagPrefix}${newVersion} ${streamhandling}""".stripMargin()
+                    int status = sh(script:   """|#!/bin/bash ${hashbangFlags}
+                                    |${gitDebug}git ${gitConfig} push ${gitPushFlags} ${gitUrlWithCredentials} ${config.tagPrefix}${newVersion} ${streamhandling}""".stripMargin(), returnStatus: true)
+                    println("the status: ")
+                    println(status)
                 }
             } else {
                 echo "Git push mode: ${gitPushMode.toString()}. Git push to remote has been skipped."
