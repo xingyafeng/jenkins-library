@@ -42,7 +42,7 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
 
 
                 sh "ls -a /home"
-                sh "ls -a /var/"
+                sh "ls -a /var/jenkins_home/.ssh"
                 credentialWrapper(config, credentialInfo) {
                     sh "printenv | sort"
                     sh "ls -a "
