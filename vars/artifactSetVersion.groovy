@@ -164,6 +164,11 @@ void call(Map parameters = [:], Closure body = null) {
             stepParam3: parameters?.script == null
         ], config)
 
+        println(config)
+        sshagent([config.gitSshKeyCredentialsId]) {
+            sh "echo test"
+        }
+        /*
         def artifactVersioning = ArtifactVersioning.getArtifactVersioning(config.buildTool, script, config)
         def currentVersion = artifactVersioning.getVersion()
 
@@ -298,7 +303,7 @@ void call(Map parameters = [:], Closure body = null) {
             script.commonPipelineEnvironment.setGitCommitId(config.gitCommitId)
         }
 
-        echo "[${STEP_NAME}]New version: ${newVersion}"
+        echo "[${STEP_NAME}]New version: ${newVersion}"*/
     }
 }
 
