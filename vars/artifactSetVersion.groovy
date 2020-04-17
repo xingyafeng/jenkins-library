@@ -280,7 +280,7 @@ void call(Map parameters = [:], Closure body = null) {
 
                     gitConfig = gitConfig.join(' ')
                     gitPushFlags = gitPushFlags.join(' ')
-
+                    println("now the push")
                     sh script:   """|#!/bin/bash ${hashbangFlags}
                                     |${gitDebug}git ${gitConfig} push ${gitPushFlags} ${gitUrlWithCredentials} ${config.tagPrefix}${newVersion} ${streamhandling}""".stripMargin()
                 }
