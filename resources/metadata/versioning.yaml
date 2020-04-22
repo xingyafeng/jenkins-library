@@ -199,10 +199,6 @@ spec:
         - STEPS
         default: cloud
     secrets:
-    - name: gitHttpsCredentialsId
-      type: jenkins
-      aliases:
-        - name: gitCredentialsId
     - name: gitSshKeyCredentialsId
       type: jenkins
       aliases:
