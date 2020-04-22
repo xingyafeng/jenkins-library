@@ -37,17 +37,9 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
             // get context configuration
             Map config = readJSON(text: sh(returnStdout: true, script: "./piper getConfig --contextConfig --stepMetadata '.pipeline/tmp/${metadataFile}'${defaultConfigArgs}${customConfigArg}"))
             echo "Config: ${config}"
-            sshagent([config.gitSshKeyCredentialsId]) {
-                sh "echo test"
-            }
+
             dockerWrapper(script, config) {
-
-
-                sh "ls -a /home"
-                sh "ls -a /var/jenkins_home/.ssh"
                 credentialWrapper(config, credentialInfo) {
-                    sh "printenv | sort"
-                    sh "ls -a "
                     sh "./piper ${stepName}${defaultConfigArgs}${customConfigArg}"
                 }
                 jenkinsUtils.handleStepResults(stepName, failOnMissingReports, failOnMissingLinks)
@@ -115,22 +107,16 @@ void credentialWrapper(config, List credentialInfo, body) {
                     if (config[cred.id]) creds.add(usernamePassword(credentialsId: config[cred.id], usernameVariable: cred.env[0], passwordVariable: cred.env[1]))
                     break
                 case "ssh":
-                    println("came to ssh cred case")
                     if (config[cred.id]) sshCreds.add(config[cred.id])
-                    println(sshCreds[0].getClass())
-                    println(sshCreds.getClass())
-                    //println(config.gitSshKeyCredentialsId)
                     break
                 default:
                     error ("invalid credential type: ${cred.type}")
             }
         }
-        println("Thats the sshcreds size")
-        println(sshCreds.size())
+
         if (sshCreds.size() > 0) {
-            //sshagent (sshCreds) {
-            sshagent([config.gitSshKeyCredentialsId]) {
-                withCredentials(sshCreds) {
+            sshagent (sshCreds) {
+                withCredentials(creds) {
                     body()
                 }
             }
