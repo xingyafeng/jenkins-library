@@ -209,6 +209,7 @@ void call(Map parameters = [:], Closure body = null) {
                     .use()
 
                 sshagent([config.gitSshKeyCredentialsId]) {
+                    sh 'cat $SSH_KNOWN_HOSTS'
                     sh "git push ${config.gitSshUrl} ${config.tagPrefix}${newVersion}"
                 }
 
