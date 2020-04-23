@@ -116,7 +116,7 @@ void credentialWrapper(config, List credentialInfo, body) {
 
         if (sshCreds.size() > 0) {
             sshagent (sshCreds) {
-                withCredentials(sshCreds) {
+                withCredentials(creds) {
                     body()
                 }
             }
