@@ -1,3 +1,4 @@
+import com.sap.piper.DownloadCacheUtils
 import com.sap.piper.PiperGoUtils
 import com.sap.piper.Utils
 import groovy.transform.Field
@@ -13,9 +14,10 @@ void call(Map parameters = [:]) {
         [type: 'usernamePassword', id: 'gitHttpsCredentialsId', env: ['PIPER_username', 'PIPER_password']],
     ]
     sh "printenv | sort"
-    String dlCacheHost = sh(returnStdout: true, script: 'echo $DL_CACHE_HOSTNAME')
-    String dlCacheNet = sh(returnStdout: true, script: 'echo $DL_CACHE_NETWORK')
-    withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts", "DL_CACHE_HOSTNAME=$dlCacheHost", "DL_CACHE_NETWORK=$dlCacheNet"]) {
+    //String dlCacheHost = sh(returnStdout: true, script: 'echo $DL_CACHE_HOSTNAME')
+    //String dlCacheNet = sh(returnStdout: true, script: 'echo $DL_CACHE_NETWORK')
+    parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(parameters.script, parameters)
+    withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts"]) {//, "DL_CACHE_HOSTNAME=$dlCacheHost", "DL_CACHE_NETWORK=$dlCacheNet"]) {
         piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
     }
 }
