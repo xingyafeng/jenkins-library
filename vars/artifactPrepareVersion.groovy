@@ -12,7 +12,7 @@ void call(Map parameters = [:]) {
         [type: 'ssh', id: 'gitSshKeyCredentialsId'],
         [type: 'usernamePassword', id: 'gitHttpsCredentialsId', env: ['PIPER_username', 'PIPER_password']],
     ]
-
+    sh "printenv | sort"
     withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts"]) {
         piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
     }
