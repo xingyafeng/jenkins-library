@@ -13,7 +13,9 @@ void call(Map parameters = [:]) {
         [type: 'usernamePassword', id: 'gitHttpsCredentialsId', env: ['PIPER_username', 'PIPER_password']],
     ]
     sh "printenv | sort"
-    withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts"]) {
+    String dlCacheHost = sh(returnStdout: true, script: 'echo $DL_CACHE_HOSTNAME')
+    String dlCacheNet = sh(returnStdout: true, script: 'echo $DL_CACHE_HOSTNAME')
+    withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts", "DL_CACHE_HOSTNAME=$dlCacheHost", "DL_CACHE_HOSTNAME=$dlCacheNet"]) {
         piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
     }
 }
