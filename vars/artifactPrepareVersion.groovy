@@ -17,7 +17,7 @@ void call(Map parameters = [:]) {
     //String dlCacheHost = sh(returnStdout: true, script: 'echo $DL_CACHE_HOSTNAME')
     //String dlCacheNet = sh(returnStdout: true, script: 'echo $DL_CACHE_NETWORK')
     parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(parameters.script, parameters)
-    withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts"]) {//, "DL_CACHE_HOSTNAME=$dlCacheHost", "DL_CACHE_NETWORK=$dlCacheNet"]) {
-        piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
-    }
+    //withEnv(["SSH_KNOWN_HOSTS=/var/jenkins_home/.ssh/known_hosts"]) {//, "DL_CACHE_HOSTNAME=$dlCacheHost", "DL_CACHE_NETWORK=$dlCacheNet"]) {
+    piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
+    //}
 }
