@@ -18,7 +18,7 @@ void call(Map parameters = [:]) {
     //String dlCacheHost = sh(returnStdout: true, script: 'echo $DL_CACHE_HOSTNAME')
     //String dlCacheNet = sh(returnStdout: true, script: 'echo $DL_CACHE_NETWORK')
     parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
-    List knownHosts = findFiles(glob: '**known_hosts')
+    List knownHosts = script.findFiles(glob: '**/known_hosts')
     script.println("Knownhosts")
     for (int i=0;i<knownHosts.size();i++){
         script.println(knownHosts[i].path)
