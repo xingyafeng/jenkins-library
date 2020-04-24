@@ -41,8 +41,8 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
             dockerWrapper(script, config) {
                 credentialWrapper(config, credentialInfo) {
                     sh 'ls -a /'
-                    int stat = sh(script: 'ls -a /var/jenkins_home/s4hana_pipeline/maven_local_repo/', returnStatus: true)
-                    int status = sh(script: 'ls -a /var/jenkins_home/workspace/set-version-test_master/', returnStatus: true)
+                    int stat = sh(script: 'ls -a s4hana_pipeline/maven_local_repo/', returnStatus: true)
+                    int status = sh(script: 'ls -a /var/jenkins_home/', returnStatus: true)
                     sh "printenv | sort"
                     sh "./piper ${stepName}${defaultConfigArgs}${customConfigArg}"
                     //sh 'ls -a /root/.m2'
