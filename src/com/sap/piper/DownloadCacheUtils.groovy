@@ -36,7 +36,6 @@ class DownloadCacheUtils {
             String network = script.env.DL_CACHE_NETWORK
             String host = script.env.DL_CACHE_HOSTNAME
 
-            echo "xxdbg ${network.asBoolean()} ${host.asBoolean()}"
             return (network.asBoolean() && host.asBoolean())
         }
     }

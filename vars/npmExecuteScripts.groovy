@@ -19,6 +19,6 @@ void call(Map parameters = [:]) {
     if (DownloadCacheUtils.isEnabled(script)) {
         parameters['defaultNpmRegistry'] = DownloadCacheUtils.getNpmRegistryUri(script)
     }
-    echo "xxdbg ${parameters.toMapString()}"
+    println("xxdbg ${parameters.toMapString()}")
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, credentials)
 }
