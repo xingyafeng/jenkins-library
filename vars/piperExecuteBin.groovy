@@ -53,6 +53,7 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
                     //sh 'ls -a /root/.m2'
                 }
                 jenkinsUtils.handleStepResults(stepName, failOnMissingReports, failOnMissingLinks)
+                script.commonPipelineEnvironment.readFromDisk(script)
             }
         }
     }
