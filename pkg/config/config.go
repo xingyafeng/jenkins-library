@@ -19,6 +19,7 @@ import (
 // Config defines the structure of the config files
 type Config struct {
 	CustomDefaults []string                          `json:"customDefaults,omitempty"`
+	Hooks          map[string]*json.RawMessage       `json:"hooks,omitempty"`
 	General        map[string]interface{}            `json:"general"`
 	Stages         map[string]map[string]interface{} `json:"stages"`
 	Steps          map[string]map[string]interface{} `json:"steps"`
@@ -27,7 +28,8 @@ type Config struct {
 
 // StepConfig defines the structure for merged step configuration
 type StepConfig struct {
-	Config map[string]interface{}
+	Config     map[string]interface{}
+	HookConfig map[string]*json.RawMessage
 }
 
 // ReadConfig loads config and returns its content
@@ -158,6 +160,11 @@ func (c *Config) GetStepConfig(flagValues map[string]interface{}, paramJSON stri
 		def.ApplyAliasConfig(parameters, secrets, filters, stageName, stepName, stepAliases)
 		stepConfig.mixIn(def.General, filters.General)
 		stepConfig.mixIn(def.Steps[stepName], filters.Steps)
+
+		// process hook configuration - this is only supported via defaults
+		if stepConfig.HookConfig != nil {
+			stepConfig.HookConfig = def.Hooks
+		}
 	}
 
 	// merge parameters provided by Piper environment
