@@ -48,6 +48,7 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
             dockerWrapper(script, config) {
                 handleErrorDetails(stepName) {
                     credentialWrapper(config, credentialInfo) {
+                        sh "printenv"
                         sh "./piper ${stepName}${defaultConfigArgs}${customConfigArg}"
                     }
                     jenkinsUtils.handleStepResults(stepName, failOnMissingReports, failOnMissingLinks)
@@ -102,6 +103,9 @@ void dockerWrapper(script, config, body) {
 }
 
 void credentialWrapper(config, List credentialInfo, body) {
+    echo credentialInfo.toString()
+    echo config.toString()
+
     if (credentialInfo.size() > 0) {
         def creds = []
         def sshCreds = []
@@ -114,6 +118,7 @@ void credentialWrapper(config, List credentialInfo, body) {
                     if (config[cred.id]) creds.add(string(credentialsId: config[cred.id], variable: cred.env[0]))
                     break
                 case "usernamePassword":
+                    echo "found usernamePassword with ${config[cred.id]}"
                     if (config[cred.id]) creds.add(usernamePassword(credentialsId: config[cred.id], usernameVariable: cred.env[0], passwordVariable: cred.env[1]))
                     break
                 case "ssh":
@@ -124,6 +129,7 @@ void credentialWrapper(config, List credentialInfo, body) {
             }
         }
 
+        echo creds.toString()
         if (sshCreds.size() > 0) {
             sshagent (sshCreds) {
                 withCredentials(creds) {
