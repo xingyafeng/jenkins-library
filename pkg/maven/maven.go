@@ -147,7 +147,13 @@ func getParametersFromOptions(options *ExecuteOptions, utils mavenUtils) ([]stri
 	}
 
 	if options.Defines != nil {
-		parameters = append(parameters, options.Defines...)
+		d := []string{}
+		for _, define := range options.Defines {
+			x := strings.ReplaceAll(define, "\\\"", "\"")
+			println(x)
+			d = append(d, x)
+		}
+		parameters = append(parameters, d...)
 	}
 
 	if !options.LogSuccessfulMavenTransfers {
