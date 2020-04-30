@@ -49,6 +49,7 @@ void call(Map parameters = [:], stepName, metadataFile, List credentialInfo, fai
             // get context configuration
             Map config = readJSON(text: sh(returnStdout: true, script: "./piper getConfig --contextConfig --stepMetadata '.pipeline/tmp/${metadataFile}'${defaultConfigArgs}${customConfigArg}"))
             echo "Config: ${config}"
+            echo "PIPER_parametersJSON: ${groovy.json.JsonOutput.toJson(stepParameters)}"
 
             dockerWrapper(script, config) {
                 handleErrorDetails(stepName) {
