@@ -50,9 +50,31 @@ class DefaultValueCache implements Serializable {
                 customDefaults = [customDefaults]
             if(customDefaults in List)
                 configFileList += customDefaults
+
+            // consider custom defaults defined in config.yml
+            List configCustomDefaults = steps.commonPipelineEnvironment.configuration.customDefaults ?: []
+            if(configCustomDefaults.size() > 0){
+                configFileList += configCustomDefaults
+            }
+
             for (def configFileName : configFileList){
                 if(configFileList.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
-                def configuration = steps.readYaml text: steps.libraryResource(configFileName)
+                String prefixHttp = 'http://'
+                String prefixHttps = 'https://'
+                Map configuration
+                if(configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)){
+                    String configFilePath = ".pipeline/${configFileName.substring(configFileName.lastIndexOf('/'))}"
+                    steps.sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
+                    configuration = steps.readYaml file: configFilePath
+                    customDefaults += [configFilePath]
+                    println("thats the downloaded config: ")
+                    println(configuration.toMapString())
+                    println("thats customDefaults: ")
+                    println(customDefaults.toListString())
+                }
+                else {
+                    configuration = steps.readYaml text: steps.libraryResource(configFileName)
+                }
                 defaultValues = MapUtils.merge(
                         MapUtils.pruneNulls(defaultValues),
                         MapUtils.pruneNulls(configuration))

@@ -34,6 +34,9 @@ void call(Map parameters = [:]) {
     handlePipelineStepErrors (stepName: STEP_NAME, stepParameters: parameters) {
 
         def script = checkScript(this, parameters)
+        String configFile = parameters.get('configFile')
+
+        loadConfigurationFromFile(script, configFile)
 
         prepareDefaultValues script: script, customDefaults: parameters.customDefaults
         println("customDefaults in step parameters: ")
@@ -48,9 +51,7 @@ void call(Map parameters = [:]) {
 
         stash name: 'pipelineConfigAndTests', includes: '.pipeline/**', allowEmpty: true
 
-        String configFile = parameters.get('configFile')
 
-        loadConfigurationFromFile(script, configFile)
 
         Map config = ConfigurationHelper.newInstance(this)
             .loadStepDefaults()
