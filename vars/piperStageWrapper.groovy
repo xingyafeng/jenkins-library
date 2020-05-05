@@ -27,7 +27,8 @@ void call(Map parameters = [:], body) {
         .addIfEmpty('stageName', stageName)
         .dependingOn('stageName').mixin('ordinal')
         .use()
-
+    println("Thats groovy config: ")
+    println(config.toMapString())
     stageLocking(config) {
         def containerMap = ContainerMap.instance.getMap().get(stageName) ?: [:]
         if (Boolean.valueOf(env.ON_K8S) && (containerMap.size() > 0 || config.runStageInPod)) {
