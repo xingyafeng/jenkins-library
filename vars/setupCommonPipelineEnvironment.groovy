@@ -38,6 +38,8 @@ void call(Map parameters = [:]) {
         prepareDefaultValues script: script, customDefaults: parameters.customDefaults
 
         List customDefaults = ['default_pipeline_environment.yml'].plus(parameters.customDefaults?:[])
+        println("thats customDefaults in setupCPE")
+        println(customDefaults.toListString())
         customDefaults.each {
             cd ->
                 writeFile file: ".pipeline/${cd}", text: libraryResource(cd)
