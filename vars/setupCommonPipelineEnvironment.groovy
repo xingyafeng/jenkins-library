@@ -82,6 +82,8 @@ private loadConfigurationFromFile(script, String configFile) {
     // A file passed to the function is not checked for existence in order to fail the pipeline.
     if (configFile) {
         script.commonPipelineEnvironment.configuration = readYaml(file: configFile)
+        println("Thats the commenPipelineEnv ocnfig after loading in setup: ")
+        println(script.commonPipelineEnvironment.configuration.toMapString())
         script.commonPipelineEnvironment.configurationFile = configFile
     }
 }
