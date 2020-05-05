@@ -36,7 +36,8 @@ void call(Map parameters = [:]) {
         def script = checkScript(this, parameters)
 
         prepareDefaultValues script: script, customDefaults: parameters.customDefaults
-
+        println("customDefaults in step parameters: ")
+        println(parameters.customDefaults.toListString())
         List customDefaults = ['default_pipeline_environment.yml'].plus(parameters.customDefaults?:[])
         println("thats customDefaults in setupCPE")
         println(customDefaults.toListString())
