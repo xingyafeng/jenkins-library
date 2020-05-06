@@ -38,11 +38,11 @@ void call(Map parameters = [:]) {
 
         loadConfigurationFromFile(script, configFile)
 
-        List customDefaults = []
+        List customDefaults = ['default_pipeline_environment.yml']
         if(parameters.customDefaults in String) {
-            customDefaults = [parameters.customDefaults]
+            customDefaults += [parameters.customDefaults]
         } else if(parameters.customDefaults in List){
-            customDefaults = parameters.customDefaults
+            customDefaults += parameters.customDefaults
         }
 
         if (script.commonPipelineEnvironment.configuration.customDefaults){
@@ -52,7 +52,7 @@ void call(Map parameters = [:]) {
             }
         }
 
-        if (customDefaults.size() > 0) {
+        if (customDefaults.size() > 1) {
             int urlCount = 0
             //for (def configFileName : customDefaults) {
             for (int i = 0; i < customDefaults.size(); i++) {
