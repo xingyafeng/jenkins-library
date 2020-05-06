@@ -83,6 +83,8 @@ void call(Map parameters = [:]) {
             }
         }
         //TODO: put all file handling here, save all customDefaults in .pipeline/ and let defaultValueCache read all customDefaults from .pipeline/
+
+        println("now prepValues")
         prepareDefaultValues script: script, customDefaults: customDefaults
 
         println("customDefaults in step parameters: ")
