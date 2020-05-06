@@ -66,6 +66,7 @@ void call(Map parameters = [:]) {
                     String configFilePath = ".pipeline/${fileName}"
                     sh(script: "curl --fail --location --output ${configFilePath} ${customDefaults[i]}")
                     urlCount += 1
+                    customDefaults[i] = fileName
 
                 } else if (fileExists(file: customDefaults[i])) {
                     //TODO: test if customDefaults[i] starts with ./
