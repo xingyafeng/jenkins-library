@@ -58,13 +58,14 @@ void call(Map parameters = [:]) {
                 String prefixHttp = 'http://'
                 String prefixHttps = 'https://'
 
+                // TODO: If file is loaded via curl(http) do not save it in customDefaults list of defaultValueCache
                 if (configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)) {
-                    String fileName = "customDefaultFromUrl_${urlCount}"
+                    String fileName = "customDefaultFromUrl_${urlCount}.yml"
                     String configFilePath = ".pipeline/${fileName}"
-                    sh(script: "curl --fail --location --output ${configFilePath} ${fileName}")
+                    sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
                     urlCount += 1
-                    
-                    //TODO: file or resource?
+
+                    //TODO: file or resource? use fileExists step to figure out if the file is in workspace or a lib resource
                 } else {
                     println("check for file or lib resource")
                    // String configContent = libraryResource(configFileName)
