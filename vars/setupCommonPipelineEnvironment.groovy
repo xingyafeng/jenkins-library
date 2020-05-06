@@ -92,7 +92,7 @@ void call(Map parameters = [:]) {
         println("customDefaults in step parameters: ")
         println(customDefaults.toListString())
 
-        customDefaults = ['default_pipeline_environment.yml'].plus(customDefaults?:[])
+       // customDefaults = ['default_pipeline_environment.yml'].plus(customDefaults?:[])
 
         println("thats customDefaults in setupCPE")
         println(customDefaults.toListString())
