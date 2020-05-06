@@ -51,9 +51,13 @@ void call(Map parameters = [:]) {
         List customDefaults = ['default_pipeline_environment.yml'].plus(parameters.customDefaults?:[])
         println("thats customDefaults in setupCPE")
         println(customDefaults.toListString())
+        String prefixHttp = 'http://'
+        String prefixHttps = 'https://'
         customDefaults.each {
             cd ->
-                writeFile file: ".pipeline/${cd}", text: libraryResource(cd)
+                if(!(cd.startsWith(prefixHttp) || cd.startsWith(prefixHttps))) {
+                    writeFile file: ".pipeline/${cd}", text: libraryResource(cd)
+                }
         }
 
         stash name: 'pipelineConfigAndTests', includes: '.pipeline/**', allowEmpty: true
