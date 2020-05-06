@@ -54,7 +54,7 @@ class DefaultValueCache implements Serializable {
             // consider custom defaults defined in config.yml
             List configCustomDefaults = steps.commonPipelineEnvironment.configuration.customDefaults
             steps.println("tahts configcustomdefaults: ")
-            steps.println(configCustomDefaults.toListString())
+            //steps.println(configCustomDefaults.toListString())
             steps.println(steps.commonPipelineEnvironment.configuration.toMapString())
             if(configCustomDefaults.size() > 0){
                 configFileList += configCustomDefaults
