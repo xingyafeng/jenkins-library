@@ -38,7 +38,11 @@ void call(Map parameters = [:]) {
 
         loadConfigurationFromFile(script, configFile)
         if (script.commonPipelineEnvironment.configuration.customDefaults){
-            parameters.customDefaults.add(script.commonPipelineEnvironment.configuration.customDefaults)
+            script.commonPipelineEnvironment.configuration.customDefaults.each{
+                cd ->
+                    parameters.customDefaults.add(cd)
+            }
+            //parameters.customDefaults.add(script.commonPipelineEnvironment.configuration.customDefaults)
         }
         prepareDefaultValues script: script, customDefaults: parameters.customDefaults
 
