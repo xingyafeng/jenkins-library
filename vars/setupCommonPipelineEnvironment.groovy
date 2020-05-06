@@ -86,6 +86,7 @@ private loadConfigurationFromFile(script, String configFile) {
         script.commonPipelineEnvironment.configuration = readYaml(file: configFile)
         println("Thats the commenPipelineEnv ocnfig after loading in setup: ")
         println(script.commonPipelineEnvironment.configuration.toMapString())
+        println(script.commonPipelineEnvironment)
         script.commonPipelineEnvironment.configurationFile = configFile
     }
 }
