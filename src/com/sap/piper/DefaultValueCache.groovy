@@ -51,7 +51,7 @@ class DefaultValueCache implements Serializable {
             }
 
             List customDefaults = []
-            
+
             // TODO: Support for customDefaults as simple files not just library resources
             for (def configFileName : configFileList){
                 if(configFileList.size() > 1) steps.echo "Loading configuration file '${configFileName}'"

@@ -63,19 +63,17 @@ void call(Map parameters = [:]) {
                     String configFilePath = ".pipeline/${fileName}"
                     sh(script: "curl --fail --location --output ${configFilePath} ${fileName}")
                     urlCount += 1
-
-                    //TODO: else if its a lib resource?
-                //} else if () {
-
-                    //TODO: else (its a file)?
+                    
+                    //TODO: file or resource?
                 } else {
-                    println("check for lib resource")
-                    String configContent = libraryResource(configFileName)
-                    if (configContent) {
-                        println("its a lib resource")
+                    println("check for file or lib resource")
+                   // String configContent = libraryResource(configFileName)
+                    if (fileExists(file: configFileName)) {
+                        println("its a file in workspace")
                     } else {
-                        writeFile file: ".pipeline/${configFileName}", text: readYaml(file: configFileName)
-                        println("its a random file")
+                        println("should be a resource")
+                        //writeFile file: ".pipeline/${configFileName}", text: readYaml(file: configFileName)
+                        //println("its a random file")
                     }
 
 
