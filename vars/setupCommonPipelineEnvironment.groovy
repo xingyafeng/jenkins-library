@@ -39,6 +39,7 @@ void call(Map parameters = [:]) {
         loadConfigurationFromFile(script, configFile)
 
         prepareDefaultValues script: script, customDefaults: parameters.customDefaults
+
         println("customDefaults in step parameters: ")
         println(parameters.customDefaults.toListString())
         List customDefaults = ['default_pipeline_environment.yml'].plus(parameters.customDefaults?:[])

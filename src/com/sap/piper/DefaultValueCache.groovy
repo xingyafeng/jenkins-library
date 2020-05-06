@@ -53,9 +53,9 @@ class DefaultValueCache implements Serializable {
 
             // consider custom defaults defined in config.yml
             List configCustomDefaults = steps.commonPipelineEnvironment.configuration.customDefaults ?: []
-            println("tahts configcustomdefaults: ")
-            println(configCustomDefaults.toListString())
-            println(steps.commonPipelineEnvironment.configuration.toMapString())
+            steps.println("tahts configcustomdefaults: ")
+            steps.println(configCustomDefaults.toListString())
+            steps.println(steps.commonPipelineEnvironment.configuration.toMapString())
             if(configCustomDefaults.size() > 0){
                 configFileList += configCustomDefaults
             }
@@ -70,10 +70,10 @@ class DefaultValueCache implements Serializable {
                     steps.sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
                     configuration = steps.readYaml file: configFilePath
                     customDefaults += [configFilePath]
-                    println("thats the downloaded config: ")
-                    println(configuration.toMapString())
-                    println("thats customDefaults: ")
-                    println(customDefaults.toListString())
+                    steps.println("thats the downloaded config: ")
+                    steps.println(configuration.toMapString())
+                    steps.println("thats customDefaults: ")
+                    steps.println(customDefaults.toListString())
                 }
                 else {
                     configuration = steps.readYaml text: steps.libraryResource(configFileName)
