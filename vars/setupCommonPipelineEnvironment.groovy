@@ -69,6 +69,7 @@ void call(Map parameters = [:]) {
 
                     //TODO: else (its a file)?
                 } else {
+                    println("check for lib resource")
                     String configContent = libraryResource(configFileName)
                     if (configContent) {
                         println("its a lib resource")
