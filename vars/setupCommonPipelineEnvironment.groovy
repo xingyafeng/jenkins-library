@@ -37,7 +37,9 @@ void call(Map parameters = [:]) {
         String configFile = parameters.get('configFile')
 
         loadConfigurationFromFile(script, configFile)
-
+        if (script.commonPipelineEnvironment.configuration.customDefaults){
+            parameters.customDefaults.add(script.commonPipelineEnvironment.configuration.customDefaults)
+        }
         prepareDefaultValues script: script, customDefaults: parameters.customDefaults
 
         println("customDefaults in step parameters: ")
