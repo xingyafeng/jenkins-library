@@ -54,34 +54,36 @@ void call(Map parameters = [:]) {
 
         if (customDefaults.size() > 0) {
             int urlCount = 0
-            for (def configFileName : customDefaults) {
+            //for (def configFileName : customDefaults) {
+            for (int i = 0; i < customDefaults.size(); i++) {
                 String prefixHttp = 'http://'
                 String prefixHttps = 'https://'
 
                 // TODO: If file is loaded via curl(http) do not save it in customDefaults list of defaultValueCache
-                if (configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)) {
+                if (customDefaults[i].startsWith(prefixHttp) || customDefaults[i].startsWith(prefixHttps)) {
+                    println("its a file from web")
                     String fileName = "customDefaultFromUrl_${urlCount}.yml"
                     String configFilePath = ".pipeline/${fileName}"
-                    sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
+                    sh(script: "curl --fail --location --output ${configFilePath} ${customDefaults[i]}")
                     urlCount += 1
 
-                    //TODO: file or resource? use fileExists step to figure out if the file is in workspace or a lib resource
-                } else {
-                    println("check for file or lib resource")
-                   // String configContent = libraryResource(configFileName)
-                    if (fileExists(file: configFileName)) {
-                        println("its a file in workspace")
-                    } else {
-                        println("should be a resource")
-                        //writeFile file: ".pipeline/${configFileName}", text: readYaml(file: configFileName)
-                        //println("its a random file")
+                } else if (fileExists(file: customDefaults[i])) {
+                    //TODO: test if customDefaults[i] starts with ./
+                    if (customDefaults[i].startsWith("./")){
+                        println("its a file in workspace and starts with ./")
+                        writeYaml file: ".pipeline/${customDefaults[i].substring(2)}", text: readYaml(file: customDefaults[i])
+                        customDefaults[i] = customDefaults[i].substring(2)
                     }
-
-
+                    else {
+                        println("its a file in workspace")
+                        writeYaml file: ".pipeline/${customDefaults[i]}", text: readYaml(file: customDefaults[i])
+                    }
+                } else {
+                    println("should be a resource")
+                    writeFile file: ".pipeline/${customDefaults[i]}", text: libraryResource(customDefaults[i])
                 }
             }
         }
-        //TODO: put all file handling here, save all customDefaults in .pipeline/ and let defaultValueCache read all customDefaults from .pipeline/
 
         println("now prepValues")
         prepareDefaultValues script: script, customDefaults: customDefaults
@@ -94,7 +96,7 @@ void call(Map parameters = [:]) {
         println("thats customDefaults in setupCPE")
         println(customDefaults.toListString())
 
-        String prefixHttp = 'http://'
+        /*String prefixHttp = 'http://'
         String prefixHttps = 'https://'
         //TODO: Add handling of customDefaults provided as links or other filepaths
         customDefaults.each {
@@ -103,7 +105,7 @@ void call(Map parameters = [:]) {
                     writeFile file: ".pipeline/${cd}", text: libraryResource(cd)
                 }
         }
-
+        */
         stash name: 'pipelineConfigAndTests', includes: '.pipeline/**', allowEmpty: true
 
 

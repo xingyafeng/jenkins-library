@@ -41,7 +41,7 @@ class DefaultValueCache implements Serializable {
 
     static void prepare(Script steps, Map parameters = [:]) {
         if(parameters == null) parameters = [:]
-        //TODO: Double check if the condition still works, since now we possible hadn an uninitialized list over through parameters.customDefaults
+        //TODO: Double check if the condition still works, since now we possible had an uninitialized list over through parameters.customDefaults
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             List configFileList = ['default_pipeline_environment.yml']
@@ -56,7 +56,13 @@ class DefaultValueCache implements Serializable {
             for (def configFileName : configFileList){
                 if(configFileList.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
 
-                def configuration = steps.readYaml text: steps.libraryResource(configFileName)
+                def configuration = steps.readYaml file: ".pipeline/${configFileName}"
+                // TODO: check if there is a better solution, especially in case the customDefaults parameter in projectConfig does not point to a URL
+                // Only files that were not downloaded are saved in customDefaults list, to not have duplicated customDefaults in getConfig Go step,
+                // since it considers the configs defined in customDefaults section of project config in addition to the via CLI provided list of customDefaults
+                if (!configFileName.startsWith("customDefaultFromUrl_")){
+                    customDefaults.add(configFileName)
+                }
                 defaultValues = MapUtils.merge(
                     MapUtils.pruneNulls(defaultValues),
                     MapUtils.pruneNulls(configuration))
