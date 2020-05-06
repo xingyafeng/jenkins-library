@@ -66,9 +66,10 @@ class DefaultValueCache implements Serializable {
                 String prefixHttps = 'https://'
                 Map configuration
                 if(configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)){
-                    String configFilePath = ".pipeline/${configFileName.substring(configFileName.lastIndexOf('/'))}"
+                    String configFilePath = ".pipeline${configFileName.substring(configFileName.lastIndexOf('/'))}"
                     steps.sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
                     configuration = steps.readYaml file: configFilePath
+                    customDefaults.remove(configFileName)
                     customDefaults += [configFilePath]
                     steps.println("thats the downloaded config: ")
                     steps.println(configuration.toMapString())
