@@ -56,6 +56,8 @@ class DefaultValueCache implements Serializable {
 
                 def configuration = steps.readYaml file: ".pipeline/${configFileName}"
                 // TODO: check if there is a better solution, especially in case the customDefaults parameter in projectConfig does not point to a URL
+                // FIXME: this does not work if URL is handed over as step parameter, better way to seperate the case of customDefaults in project config and handing over as step parameter is needed
+                // FIXME contd. e.g., provide starting index of customDefaults from project config, since those will always be at the end of customDefaults list
                 // Only files that were not downloaded are saved in customDefaults list, to not have duplicated customDefaults in getConfig Go step,
                 // since it considers the configs defined in customDefaults section of project config in addition to the via CLI provided list of customDefaults
                 if (!configFileName.startsWith("customDefaultFromUrl_")){
@@ -68,59 +70,4 @@ class DefaultValueCache implements Serializable {
             DefaultValueCache.createInstance(defaultValues, customDefaults)
         }
     }
-
-    /*
-    static void prepare(Script steps, Map parameters = [:]) {
-        if(parameters == null) parameters = [:]
-        if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
-            def defaultValues = [:]
-            def configFileList = ['default_pipeline_environment.yml']
-
-            def customDefaults = parameters.customDefaults
-
-
-            if(customDefaults in List)
-                configFileList += customDefaults
-
-            // TODO: move to setupCPE -> consider custom defaults defined in config.yml
-            List configCustomDefaults = steps.commonPipelineEnvironment.configuration.customDefaults ?: []
-
-            steps.println("tahts configcustomdefaults: ")
-            //steps.println(configCustomDefaults.toListString())
-            steps.println(steps.commonPipelineEnvironment.configuration.toMapString())
-
-            if(configCustomDefaults.size() > 0){
-                configFileList += configCustomDefaults
-            }
-
-            for (def configFileName : configFileList){
-                if(configFileList.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
-                String prefixHttp = 'http://'
-                String prefixHttps = 'https://'
-                Map configuration
-                if(configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)){
-                    String fileName = ${configFileName.substring(configFileName.lastIndexOf('/')+1)}
-                    String configFilePath = ".pipeline/${fileName}"
-                    steps.sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
-                    configuration = steps.readYaml file: configFilePath
-                    // TODO: use logical files names and remove links from customDefaults list (customDefaults in the list should be relative filepaths, setupCPE copies them to .pipeline/)
-                    customDefaults.remove(configFileName)
-                    customDefaults += [configFilePath]
-
-                    steps.println("thats the downloaded config: ")
-                    steps.println(configuration.toMapString())
-                    steps.println("thats customDefaults: ")
-                    steps.println(customDefaults.toListString())
-                }
-                // TODO: add else if that can handle customDefaults which are not library resources
-                else {
-                    configuration = steps.readYaml text: steps.libraryResource(configFileName)
-                }
-                defaultValues = MapUtils.merge(
-                        MapUtils.pruneNulls(defaultValues),
-                        MapUtils.pruneNulls(configuration))
-            }
-            DefaultValueCache.createInstance(defaultValues, customDefaults)
-        }
-    }*/
 }
