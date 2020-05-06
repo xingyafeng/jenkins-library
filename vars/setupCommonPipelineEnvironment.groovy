@@ -69,7 +69,7 @@ void call(Map parameters = [:]) {
                     customDefaults[i] = fileName
 
                 } else if (fileExists(file: customDefaults[i])) {
-                    //TODO: test if customDefaults[i] starts with ./
+                    //TODO: test if customDefaults[i] starts with ./ works with fileExists and works properly in general
                     if (customDefaults[i].startsWith("./")){
                         println("its a file in workspace and starts with ./")
                         writeYaml file: ".pipeline/${customDefaults[i].substring(2)}", text: readYaml(file: customDefaults[i])
@@ -89,24 +89,9 @@ void call(Map parameters = [:]) {
         println("now prepValues")
         prepareDefaultValues script: script, customDefaults: customDefaults
 
-        println("customDefaults in step parameters: ")
-        println(customDefaults.toListString())
-
-       // customDefaults = ['default_pipeline_environment.yml'].plus(customDefaults?:[])
-
         println("thats customDefaults in setupCPE")
         println(customDefaults.toListString())
 
-        /*String prefixHttp = 'http://'
-        String prefixHttps = 'https://'
-        //TODO: Add handling of customDefaults provided as links or other filepaths
-        customDefaults.each {
-            cd ->
-                if(!(cd.startsWith(prefixHttp) || cd.startsWith(prefixHttps))) {
-                    writeFile file: ".pipeline/${cd}", text: libraryResource(cd)
-                }
-        }
-        */
         stash name: 'pipelineConfigAndTests', includes: '.pipeline/**', allowEmpty: true
 
 

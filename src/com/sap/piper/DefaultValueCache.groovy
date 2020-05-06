@@ -41,7 +41,7 @@ class DefaultValueCache implements Serializable {
 
     static void prepare(Script steps, Map parameters = [:]) {
         if(parameters == null) parameters = [:]
-        //TODO: Double check if the condition still works, since now we possible had an uninitialized list over through parameters.customDefaults
+        //TODO: Double check if the condition still works, since now we possibly hand an uninitialized list over through parameters.customDefaults
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             List paramCustomDefaults = []
@@ -51,7 +51,6 @@ class DefaultValueCache implements Serializable {
 
             List customDefaults = []
 
-            // TODO: Support for customDefaults as simple files not just library resources
             for (def configFileName : paramCustomDefaults){
                 if(paramCustomDefaults.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
 
