@@ -37,22 +37,64 @@ void call(Map parameters = [:]) {
         String configFile = parameters.get('configFile')
 
         loadConfigurationFromFile(script, configFile)
+
+        List customDefaults = []
+        if(parameters.customDefaults in String) {
+            customDefaults = [parameters.customDefaults]
+        } else if(parameters.customDefaults in List){
+            customDefaults = parameters.customDefaults
+        }
+
         if (script.commonPipelineEnvironment.configuration.customDefaults){
             script.commonPipelineEnvironment.configuration.customDefaults.each{
                 cd ->
-                    parameters.customDefaults.add(cd)
+                    customDefaults.add(cd)
             }
-            //parameters.customDefaults.add(script.commonPipelineEnvironment.configuration.customDefaults)
         }
-        prepareDefaultValues script: script, customDefaults: parameters.customDefaults
+
+        if (customDefaults.size() > 0) {
+            int urlCount = 0
+            for (def configFileName : customDefaults) {
+                String prefixHttp = 'http://'
+                String prefixHttps = 'https://'
+
+                if (configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)) {
+                    String fileName = "customDefaultFromUrl_${urlCount}"
+                    String configFilePath = ".pipeline/${fileName}"
+                    sh(script: "curl --fail --location --output ${configFilePath} ${fileName}")
+                    urlCount += 1
+
+                    //TODO: else if its a lib resource?
+                //} else if () {
+
+                    //TODO: else (its a file)?
+                } else {
+                    String configContent = libraryResource(configFileName)
+                    if (configContent) {
+                        println("its a lib resource")
+                    } else {
+                        writeFile file: ".pipeline/${configFileName}", text: readYaml(file: configFileName)
+                        println("its a random file")
+                    }
+
+
+                }
+            }
+        }
+        //TODO: put all file handling here, save all customDefaults in .pipeline/ and let defaultValueCache read all customDefaults from .pipeline/
+        prepareDefaultValues script: script, customDefaults: customDefaults
 
         println("customDefaults in step parameters: ")
-        println(parameters.customDefaults.toListString())
-        List customDefaults = ['default_pipeline_environment.yml'].plus(parameters.customDefaults?:[])
+        println(customDefaults.toListString())
+
+        customDefaults = ['default_pipeline_environment.yml'].plus(customDefaults?:[])
+
         println("thats customDefaults in setupCPE")
         println(customDefaults.toListString())
+
         String prefixHttp = 'http://'
         String prefixHttps = 'https://'
+        //TODO: Add handling of customDefaults provided as links or other filepaths
         customDefaults.each {
             cd ->
                 if(!(cd.startsWith(prefixHttp) || cd.startsWith(prefixHttps))) {

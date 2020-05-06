@@ -41,21 +41,48 @@ class DefaultValueCache implements Serializable {
 
     static void prepare(Script steps, Map parameters = [:]) {
         if(parameters == null) parameters = [:]
+        //TODO: Double check if the condition still works, since now we possible hadn an uninitialized list over through parameters.customDefaults
+        if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
+            def defaultValues = [:]
+            List configFileList = ['default_pipeline_environment.yml']
+            List paramCustomDefaults = parameters.customDefaults
+            List customDefaults = []
+
+            configFileList += paramCustomDefaults
+
+            // TODO: Support for customDefaults as simple files not just library resources
+            for (def configFileName : configFileList){
+                if(configFileList.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
+
+                def configuration = steps.readYaml text: steps.libraryResource(configFileName)
+                defaultValues = MapUtils.merge(
+                    MapUtils.pruneNulls(defaultValues),
+                    MapUtils.pruneNulls(configuration))
+            }
+            DefaultValueCache.createInstance(defaultValues, customDefaults)
+        }
+    }
+
+    /*
+    static void prepare(Script steps, Map parameters = [:]) {
+        if(parameters == null) parameters = [:]
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             def configFileList = ['default_pipeline_environment.yml']
+
             def customDefaults = parameters.customDefaults
 
-            if(customDefaults in String)
-                customDefaults = [customDefaults]
+
             if(customDefaults in List)
                 configFileList += customDefaults
 
-            // consider custom defaults defined in config.yml
+            // TODO: move to setupCPE -> consider custom defaults defined in config.yml
             List configCustomDefaults = steps.commonPipelineEnvironment.configuration.customDefaults ?: []
+
             steps.println("tahts configcustomdefaults: ")
             //steps.println(configCustomDefaults.toListString())
             steps.println(steps.commonPipelineEnvironment.configuration.toMapString())
+
             if(configCustomDefaults.size() > 0){
                 configFileList += configCustomDefaults
             }
@@ -66,16 +93,20 @@ class DefaultValueCache implements Serializable {
                 String prefixHttps = 'https://'
                 Map configuration
                 if(configFileName.startsWith(prefixHttp) || configFileName.startsWith(prefixHttps)){
-                    String configFilePath = ".pipeline${configFileName.substring(configFileName.lastIndexOf('/'))}"
+                    String fileName = ${configFileName.substring(configFileName.lastIndexOf('/')+1)}
+                    String configFilePath = ".pipeline/${fileName}"
                     steps.sh(script: "curl --fail --location --output ${configFilePath} ${configFileName}")
                     configuration = steps.readYaml file: configFilePath
+                    // TODO: use logical files names and remove links from customDefaults list (customDefaults in the list should be relative filepaths, setupCPE copies them to .pipeline/)
                     customDefaults.remove(configFileName)
                     customDefaults += [configFilePath]
+
                     steps.println("thats the downloaded config: ")
                     steps.println(configuration.toMapString())
                     steps.println("thats customDefaults: ")
                     steps.println(customDefaults.toListString())
                 }
+                // TODO: add else if that can handle customDefaults which are not library resources
                 else {
                     configuration = steps.readYaml text: steps.libraryResource(configFileName)
                 }
@@ -85,5 +116,5 @@ class DefaultValueCache implements Serializable {
             }
             DefaultValueCache.createInstance(defaultValues, customDefaults)
         }
-    }
+    }*/
 }
