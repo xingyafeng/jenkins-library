@@ -45,11 +45,13 @@ class DefaultValueCache implements Serializable {
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             List configFileList = ['default_pipeline_environment.yml']
-            List paramCustomDefaults = parameters.customDefaults
+            if (parameters.customDefaults){
+                List paramCustomDefaults = parameters.customDefaults
+                configFileList += paramCustomDefaults
+            }
+
             List customDefaults = []
-
-            configFileList += paramCustomDefaults
-
+            
             // TODO: Support for customDefaults as simple files not just library resources
             for (def configFileName : configFileList){
                 if(configFileList.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
