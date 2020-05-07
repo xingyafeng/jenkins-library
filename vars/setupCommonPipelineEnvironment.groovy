@@ -38,7 +38,7 @@ void call(Map parameters = [:]) {
 
         loadConfigurationFromFile(script, configFile)
 
-        List customDefaults = ['default_pipeline_environment.yml']
+        List customDefaults = []//['default_pipeline_environment.yml']
         if(parameters.customDefaults in String) {
             customDefaults += [parameters.customDefaults]
         } else if(parameters.customDefaults in List){
@@ -70,7 +70,7 @@ void call(Map parameters = [:]) {
                     urlCount += 1
                     customDefaults[i] = fileName
 
-                } else if (fileExists(file: customDefaults[i])) {
+                } else if (fileExists(customDefaults[i])) {
                     //TODO: test if customDefaults[i] starts with ./ works with fileExists and works properly in general
                     if (customDefaults[i].startsWith("./")){
                         println("its a file in workspace and starts with ./")

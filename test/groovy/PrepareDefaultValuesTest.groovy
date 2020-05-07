@@ -18,14 +18,12 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
     private JenkinsStepRule stepRule = new JenkinsStepRule(this)
     private JenkinsLoggingRule loggingRule = new JenkinsLoggingRule(this)
     private ExpectedException thrown = ExpectedException.none()
-    //private JenkinsReadYamlRule readYamlRule = new JenkinsReadYamlRule(this)
     private JenkinsWriteFileRule writeFileRule = new JenkinsWriteFileRule(this)
 
 
     @Rule
     public RuleChain ruleChain = Rules
         .getCommonRules(this)
-        //.around(readYamlRule)
         .around(writeFileRule)
         .around(thrown)
         .around(stepRule)
@@ -33,10 +31,8 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
 
     @Before
     public void setup() {
-        //readYamlRule
-        //readYamlRule.registerYaml(".pipeline/default.yml", new FileInputStream(new File("test/resources/configs/default.yml")))
-         //           .registerYaml('.pipeline/custom.yml', new FileInputStream(new File("test/resources/configs/custom.yml")))
-        //readYamlRule.registerYaml('.pipeline/custom.yml', new FileInputStream(new File("test/resources/configs/custom.yml")))
+
+
 
         helper.registerAllowedMethod("readYaml", [Map], {  Map m ->
             def yml
@@ -48,7 +44,6 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
             } else {
                 throw new IllegalArgumentException("Key 'text' and 'file' are both missing in map ${m}.")
             }
-            //return readYaml(yml)
         })
 
         helper.registerAllowedMethod("libraryResource", [String], { fileName ->
@@ -97,16 +92,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
         assert DefaultValueCache.getInstance().getDefaultValues().size() == 1
         assert DefaultValueCache.getInstance().getDefaultValues().key == 'value'
     }
-    // TODO: move to setupCommonPipelineEnvTest
-    @Test
-    public void testAttemptToLoadNonExistingConfigFile() {
 
-        // Behavior documented here based on reality check
-        thrown.expect(hudson.AbortException.class)
-        thrown.expectMessage('No such library resource not_found could be found')
-
-        stepRule.step.prepareDefaultValues(script: nullScript, customDefaults: 'not_found')
-    }
     // TODO: move to setupCommonPipelineEnvTest
     @Test
     public void testDefaultPipelineEnvironmentWithCustomConfigReferencedAsString() {
@@ -117,11 +103,11 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
         assert DefaultValueCache.getInstance().getDefaultValues().default == 'config'
         assert DefaultValueCache.getInstance().getDefaultValues().custom == 'myConfig'
     }
-    // TODO move to setupCommonPipelineEnvTest
+
     @Test
     public void testDefaultPipelineEnvironmentWithCustomConfigReferencedAsList() {
 
-        stepRule.step.prepareDefaultValues(script: nullScript, customDefaults: ['custom.yml'])
+        stepRule.step.prepareDefaultValues(script: nullScript, customDefaults: ['default_pipeline_environment.yml','custom.yml'])
 
         assert DefaultValueCache.getInstance().getDefaultValues().size() == 2
         assert DefaultValueCache.getInstance().getDefaultValues().default == 'config'
