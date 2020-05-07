@@ -50,7 +50,8 @@ class DefaultValueCache implements Serializable {
             }
 
             List customDefaults = []
-
+            steps.println("thats customdefautlts size: ")
+            steps.println(steps.commonPipelineEnvironment.customDefaults.size())
             for (def configFileName : paramCustomDefaults){
                 if(paramCustomDefaults.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
 
