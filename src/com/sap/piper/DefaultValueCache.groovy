@@ -48,7 +48,7 @@ class DefaultValueCache implements Serializable {
             if (parameters.customDefaults){
                 paramCustomDefaults = parameters.customDefaults
                 steps.println("thats customdefautlts size: ")
-                steps.println(steps.commonPipelineEnvironment.configuration.customDefaults.size())
+                steps.println(parameters.customDefaultsInConfig)
             }
 
             List customDefaults = []
