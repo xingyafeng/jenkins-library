@@ -74,12 +74,12 @@ void call(Map parameters = [:]) {
                     //TODO: test if customDefaults[i] starts with ./ works with fileExists and works properly in general
                     if (customDefaults[i].startsWith("./")){
                         println("its a file in workspace and starts with ./")
-                        writeYaml file: ".pipeline/${customDefaults[i].substring(2)}", text: readYaml(file: customDefaults[i])
+                        writeYaml file: ".pipeline/${customDefaults[i].substring(2)}", data: readYaml(file: customDefaults[i])
                         customDefaults[i] = customDefaults[i].substring(2)
                     }
                     else {
                         println("its a file in workspace")
-                        writeYaml file: ".pipeline/${customDefaults[i]}", text: readYaml(file: customDefaults[i])
+                        writeYaml file: ".pipeline/${customDefaults[i]}", data: readYaml(file: customDefaults[i])
                     }
                 } else {
                     println("should be a resource")
