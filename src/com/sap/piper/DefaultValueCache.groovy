@@ -55,7 +55,7 @@ class DefaultValueCache implements Serializable {
                 }
             } else {
                 paramCustomDefaults = ['default_pipeline_environment.yml']
-                steps.writeFile file: ".pipeline/${paramCustomDefaults[0]}", text: libraryResource(paramCustomDefaults[0])
+                steps.writeFile file: ".pipeline/${paramCustomDefaults[0]}", text: steps.libraryResource(paramCustomDefaults[0])
             }
 
             List customDefaults = []
