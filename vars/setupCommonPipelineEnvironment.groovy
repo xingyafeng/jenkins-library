@@ -51,7 +51,8 @@ void call(Map parameters = [:]) {
                     customDefaults.add(cd)
             }
         }
-
+        println("thats customdefautlts size: ")
+        println(script.commonPipelineEnvironment.configuration.customDefaults.size())
         if (customDefaults.size() > 1) {
             int urlCount = 0
             //for (def configFileName : customDefaults) {
