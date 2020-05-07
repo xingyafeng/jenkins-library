@@ -34,8 +34,8 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
     @Before
     public void setup() {
         //readYamlRule
-        readYamlRule.registerYaml(".pipeline/default_pipeline_environment.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
-                    .registerYaml(".pipeline/custom.yml", new FileInputStream(new File("test/resources/configs/custom.yml")))
+        readYamlRule.registerYaml('.pipeline/default_pipeline_environment.yml', new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
+                    .registerYaml('.pipeline/custom.yml', new FileInputStream(new File("test/resources/configs/custom.yml")))
 
         helper.registerAllowedMethod("libraryResource", [String], { fileName ->
             if(fileName == 'default_pipeline_environment.yml') {
@@ -116,8 +116,8 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
 
     @Test
     public void testAssertNoLogMessageInCaseOfNoAdditionalConfigFiles() {
-
-
+        //readYamlRule.registerYaml(".pipeline/default_pipeline_environment.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
+        //readYamlRule.registerYaml(".pipeline/default_pipeline_environment.yml", [default: 'config'])
         stepRule.step.prepareDefaultValues(script: nullScript)
 
         assert ! loggingRule.log.contains("Loading configuration file 'default_pipeline_environment.yml'")
