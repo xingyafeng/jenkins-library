@@ -44,16 +44,16 @@ void call(Map parameters = [:]) {
         } else if(parameters.customDefaults in List){
             customDefaults += parameters.customDefaults
         }
-        int customDefaultsInConfig = 0
+        int numCustomDefaultsInConfig = 0
         if (script.commonPipelineEnvironment.configuration.customDefaults){
-            customDefaultsInConfig = script.commonPipelineEnvironment.configuration.customDefaults.size()
+            numCustomDefaultsInConfig = script.commonPipelineEnvironment.configuration.customDefaults.size()
             script.commonPipelineEnvironment.configuration.customDefaults.each{
                 cd ->
                     customDefaults.add(cd)
             }
         }
         println("thats customdefautlts size: ")
-        println(customDefaultsInConfig)
+        println(numCustomDefaultsInConfig)
         if (customDefaults.size() > 1) {
             int urlCount = 0
             //for (def configFileName : customDefaults) {
@@ -89,7 +89,7 @@ void call(Map parameters = [:]) {
         }
 
         println("now prepValues")
-        prepareDefaultValues script: script, customDefaults: customDefaults, customDefaultsInConfig: customDefaultsInConfig
+        prepareDefaultValues script: script//, customDefaults: customDefaults, numCustomDefaultsInConfig: numCustomDefaultsInConfig
 
         //println("thats customDefaults in setupCPE")
         //println(customDefaults.toListString())

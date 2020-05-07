@@ -18,18 +18,21 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
     private JenkinsStepRule stepRule = new JenkinsStepRule(this)
     private JenkinsLoggingRule loggingRule = new JenkinsLoggingRule(this)
     private ExpectedException thrown = ExpectedException.none()
+    private JenkinsReadYamlRule readYamlRule = new JenkinsReadYamlRule(this)
+
 
     @Rule
     public RuleChain ruleChain = Rules
         .getCommonRules(this)
-        .around(new JenkinsReadYamlRule(this))
+        .around(readYamlRule)
         .around(thrown)
         .around(stepRule)
         .around(loggingRule)
 
     @Before
     public void setup() {
-
+        readYamlRule.registerYaml("./pipeline/default_pipeline_environment.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
+        readYamlRule.registerYaml("./pipeline/custom.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
         helper.registerAllowedMethod("libraryResource", [String], { fileName ->
             switch(fileName) {
                 case 'default_pipeline_environment.yml': return "default: 'config'"
@@ -38,6 +41,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
                 default: return "the:'end'"
             }
         })
+
     }
 
     @Test
@@ -78,7 +82,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
         assert DefaultValueCache.getInstance().getDefaultValues().size() == 1
         assert DefaultValueCache.getInstance().getDefaultValues().key == 'value'
     }
-
+    // TODO: move to setupCommonPipelineEnvTest
     @Test
     public void testAttemptToLoadNonExistingConfigFile() {
 
@@ -88,7 +92,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
 
         stepRule.step.prepareDefaultValues(script: nullScript, customDefaults: 'not_found')
     }
-
+    // TODO: move to setupCommonPipelineEnvTest
     @Test
     public void testDefaultPipelineEnvironmentWithCustomConfigReferencedAsString() {
 
@@ -98,7 +102,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
         assert DefaultValueCache.getInstance().getDefaultValues().default == 'config'
         assert DefaultValueCache.getInstance().getDefaultValues().custom == 'myConfig'
     }
-
+    // TODO move to setupCommonPipelineEnvTest
     @Test
     public void testDefaultPipelineEnvironmentWithCustomConfigReferencedAsList() {
 
@@ -116,7 +120,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
 
         assert ! loggingRule.log.contains("Loading configuration file 'default_pipeline_environment.yml'")
     }
-
+    // TODO: register file in .pipeline
     @Test
     public void testAssertLogMessageInCaseOfMoreThanOneConfigFile() {
 

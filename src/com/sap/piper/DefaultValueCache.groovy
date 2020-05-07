@@ -50,7 +50,12 @@ class DefaultValueCache implements Serializable {
                 paramCustomDefaults = parameters.customDefaults
                 //steps.println("thats customdefautlts size: ")
                 //steps.println(parameters.customDefaultsInConfig)
-                customDefaultsInConfig = parameters.customDefaultsInConfig
+                if (parameters.numCustomDefaultsInConfig){
+                    customDefaultsInConfig = parameters.numCustomDefaultsInConfig
+                }
+            } else {
+                paramCustomDefaults = ['default_pipeline_environment.yml']
+                steps.writeFile file: ".pipeline/${paramCustomDefaults[0]}", text: libraryResource(paramCustomDefaults[0])
             }
 
             List customDefaults = []
