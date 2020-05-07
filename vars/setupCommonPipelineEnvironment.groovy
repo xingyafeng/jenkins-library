@@ -91,8 +91,8 @@ void call(Map parameters = [:]) {
         println("now prepValues")
         prepareDefaultValues script: script, customDefaults: customDefaults, customDefaultsInConfig: customDefaultsInConfig
 
-        println("thats customDefaults in setupCPE")
-        println(customDefaults.toListString())
+        //println("thats customDefaults in setupCPE")
+        //println(customDefaults.toListString())
 
         stash name: 'pipelineConfigAndTests', includes: '.pipeline/**', allowEmpty: true
 

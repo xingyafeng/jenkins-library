@@ -48,8 +48,8 @@ class DefaultValueCache implements Serializable {
             int customDefaultsInConfig = 0
             if (parameters.customDefaults){
                 paramCustomDefaults = parameters.customDefaults
-                steps.println("thats customdefautlts size: ")
-                steps.println(parameters.customDefaultsInConfig)
+                //steps.println("thats customdefautlts size: ")
+                //steps.println(parameters.customDefaultsInConfig)
                 customDefaultsInConfig = parameters.customDefaultsInConfig
             }
 
