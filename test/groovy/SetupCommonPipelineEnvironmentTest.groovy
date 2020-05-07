@@ -23,8 +23,8 @@ class SetupCommonPipelineEnvironmentTest extends BasePiperTest {
     @Rule
     public RuleChain rules = Rules
         .getCommonRules(this)
-        .around(thrown)
         .around(writeFileRule)
+        .around(thrown)
         .around(stepRule)
 
 
@@ -95,7 +95,7 @@ class SetupCommonPipelineEnvironmentTest extends BasePiperTest {
             switch(path) {
                 case 'default_pipeline_environment.yml': return false
                 case 'custom.yml': return false
-                case 'notFound.yml': return true
+                case 'notFound.yml': return false
                 default: return true
             }
         })
