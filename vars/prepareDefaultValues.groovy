@@ -16,6 +16,5 @@ import groovy.transform.Field
  */
 @GenerateDocumentation
 void call(Map parameters = [:]) {
-    println("now defaultvaluecache will be prepared")
     DefaultValueCache.prepare(this, parameters)
 }
