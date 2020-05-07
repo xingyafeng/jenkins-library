@@ -71,16 +71,16 @@ void call(Map parameters = [:]) {
 
                 } else if (fileExists(customDefaults[i])) {
                     // copy files to .pipeline/ to make sure they are in the pipelineConfigAndTests stash
-                    if (customDefaults[i].startsWith("./")){
+                    /*if (customDefaults[i].startsWith("./")){
                         println("its a file in workspace and starts with ./")
                         // TODO: test if cutting off ./ is necessary
                         writeFile file: ".pipeline/${customDefaults[i].substring(2)}", text: readFile(file: customDefaults[i])
                         customDefaults[i] = customDefaults[i].substring(2)
                     }
-                    else {
+                    else {*/
                         println("its a file in workspace")
                         writeFile file: ".pipeline/${customDefaults[i]}", text: readFile(file: customDefaults[i])
-                    }
+                    //}
                 } else {
                     println("should be a resource")
                     writeFile file: ".pipeline/${customDefaults[i]}", text: libraryResource(customDefaults[i])
