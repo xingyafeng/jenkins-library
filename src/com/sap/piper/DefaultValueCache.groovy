@@ -72,8 +72,8 @@ class DefaultValueCache implements Serializable {
                     MapUtils.pruneNulls(defaultValues),
                     MapUtils.pruneNulls(configuration))
             }
-            println("Here customDefautls list as it will be added: ")
-            println(customDefaults.toListString())
+            steps.println("Here customDefautls list as it will be added: ")
+            steps.println(customDefaults.toListString())
             DefaultValueCache.createInstance(defaultValues, customDefaults)
         }
     }
