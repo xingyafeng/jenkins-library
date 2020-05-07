@@ -38,7 +38,7 @@ void call(Map parameters = [:]) {
 
         loadConfigurationFromFile(script, configFile)
 
-        List customDefaults = ['default_pipeline_environment.yml']
+        List customDefaults = []//['default_pipeline_environment.yml']
         if(parameters.customDefaults in String) {
             customDefaults += [parameters.customDefaults]
         } else if(parameters.customDefaults in List){

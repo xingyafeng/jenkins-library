@@ -10,7 +10,7 @@ import util.JenkinsLoggingRule
 import util.JenkinsReadYamlRule
 import util.JenkinsShellCallRule
 import util.JenkinsStepRule
-
+import util.JenkinsWriteFileRule
 import util.Rules
 
 public class PrepareDefaultValuesTest extends BasePiperTest {
@@ -19,26 +19,27 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
     private JenkinsLoggingRule loggingRule = new JenkinsLoggingRule(this)
     private ExpectedException thrown = ExpectedException.none()
     private JenkinsReadYamlRule readYamlRule = new JenkinsReadYamlRule(this)
+    private JenkinsWriteFileRule writeFileRule = new JenkinsWriteFileRule(this)
 
 
     @Rule
     public RuleChain ruleChain = Rules
         .getCommonRules(this)
         .around(readYamlRule)
+        .around(writeFileRule)
         .around(thrown)
         .around(stepRule)
         .around(loggingRule)
 
     @Before
     public void setup() {
-        readYamlRule.registerYaml("./pipeline/default_pipeline_environment.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
-        readYamlRule.registerYaml("./pipeline/custom.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
+        //readYamlRule
+        readYamlRule.registerYaml(".pipeline/default_pipeline_environment.yml", new FileInputStream(new File("test/resources/configs/default_pipeline_environment.yml")))
+                    .registerYaml(".pipeline/custom.yml", new FileInputStream(new File("test/resources/configs/custom.yml")))
+
         helper.registerAllowedMethod("libraryResource", [String], { fileName ->
-            switch(fileName) {
-                case 'default_pipeline_environment.yml': return "default: 'config'"
-                case 'custom.yml': return "custom: 'myConfig'"
-                case 'not_found': throw new hudson.AbortException('No such library resource not_found could be found')
-                default: return "the:'end'"
+            if(fileName == 'default_pipeline_environment.yml') {
+                return "default: 'config'"
             }
         })
 
@@ -115,6 +116,7 @@ public class PrepareDefaultValuesTest extends BasePiperTest {
 
     @Test
     public void testAssertNoLogMessageInCaseOfNoAdditionalConfigFiles() {
+
 
         stepRule.step.prepareDefaultValues(script: nullScript)
 
