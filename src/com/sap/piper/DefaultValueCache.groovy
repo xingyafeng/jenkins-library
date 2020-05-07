@@ -41,15 +41,15 @@ class DefaultValueCache implements Serializable {
 
     static void prepare(Script steps, Map parameters = [:]) {
         if(parameters == null) parameters = [:]
-        //TODO: Double check if the condition still works, since now we possibly hand an uninitialized list over through parameters.customDefaults
+
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             List paramCustomDefaults = []
             int customDefaultsInConfig = 0
+
             if (parameters.customDefaults){
                 paramCustomDefaults = parameters.customDefaults
-                steps.println("thats customdefautlts size in defaultValCache: ")
-                steps.println(parameters.customDefaultsInConfig)
+
                 if (parameters.numCustomDefaultsInConfig){
                     customDefaultsInConfig = parameters.numCustomDefaultsInConfig
                 }
@@ -64,6 +64,7 @@ class DefaultValueCache implements Serializable {
                 if(paramCustomDefaults.size() > 1) steps.echo "Loading configuration file '${paramCustomDefaults[i]}'"
 
                 def configuration = steps.readYaml file: ".pipeline/${paramCustomDefaults[i]}"
+
                 // Only customDefaults not coming from project config are saved in customDefaults list, to not have duplicated customDefaults in getConfig Go step,
                 // since the go step considers the customDefaults defined in project config in addition to the via CLI provided list of customDefaults
                 if (i <= paramCustomDefaults.size()-1-customDefaultsInConfig){

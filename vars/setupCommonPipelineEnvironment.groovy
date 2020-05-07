@@ -61,7 +61,6 @@ void call(Map parameters = [:]) {
                 String prefixHttp = 'http://'
                 String prefixHttps = 'https://'
 
-                // TODO: If file is loaded via curl(http) do not save it in customDefaults list of defaultValueCache
                 if (customDefaults[i].startsWith(prefixHttp) || customDefaults[i].startsWith(prefixHttps)) {
                     println("its a file from web")
                     String fileName = "customDefaultFromUrl_${urlCount}.yml"
@@ -87,12 +86,7 @@ void call(Map parameters = [:]) {
                 }
             }
         }
-
-        println("now prepValues")
         prepareDefaultValues script: script, customDefaults: customDefaults, numCustomDefaultsInConfig: numCustomDefaultsInConfig
-
-        //println("thats customDefaults in setupCPE")
-        //println(customDefaults.toListString())
 
         stash name: 'pipelineConfigAndTests', includes: '.pipeline/**', allowEmpty: true
 
