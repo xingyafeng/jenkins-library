@@ -45,30 +45,35 @@ class DefaultValueCache implements Serializable {
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             List paramCustomDefaults = []
+            int customDefaultsInConfig = 0
             if (parameters.customDefaults){
                 paramCustomDefaults = parameters.customDefaults
                 steps.println("thats customdefautlts size: ")
                 steps.println(parameters.customDefaultsInConfig)
+                customDefaultsInConfig = parameters.customDefaultsInConfig
             }
 
             List customDefaults = []
 
-            for (def configFileName : paramCustomDefaults){
-                if(paramCustomDefaults.size() > 1) steps.echo "Loading configuration file '${configFileName}'"
+            //for (def configFileName : paramCustomDefaults){
+            for (int i = 0; i < paramCustomDefaults.size(); i++) {
+                if(paramCustomDefaults.size() > 1) steps.echo "Loading configuration file '${paramCustomDefaults[i]}'"
 
-                def configuration = steps.readYaml file: ".pipeline/${configFileName}"
+                def configuration = steps.readYaml file: ".pipeline/${paramCustomDefaults[i]}"
                 // TODO: check if there is a better solution, especially in case the customDefaults parameter in projectConfig does not point to a URL
                 // FIXME: this does not work if URL is handed over as step parameter, better way to seperate the case of customDefaults in project config and handing over as step parameter is needed
                 // FIXME contd. e.g., provide starting index of customDefaults from project config, since those will always be at the end of customDefaults list
                 // Only files that were not downloaded are saved in customDefaults list, to not have duplicated customDefaults in getConfig Go step,
                 // since it considers the configs defined in customDefaults section of project config in addition to the via CLI provided list of customDefaults
-                if (!configFileName.startsWith("customDefaultFromUrl_")){
-                    customDefaults.add(configFileName)
+                if (i <= paramCustomDefaults.size()-1-customDefaultsInConfig){
+                    customDefaults.add(paramCustomDefaults[i])
                 }
                 defaultValues = MapUtils.merge(
                     MapUtils.pruneNulls(defaultValues),
                     MapUtils.pruneNulls(configuration))
             }
+            println("Here customDefautls list as it will be added: ")
+            println(customDefaults.toListString())
             DefaultValueCache.createInstance(defaultValues, customDefaults)
         }
     }
