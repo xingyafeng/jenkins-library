@@ -89,7 +89,7 @@ void call(Map parameters = [:]) {
         }
 
         println("now prepValues")
-        prepareDefaultValues script: script//, customDefaults: customDefaults, numCustomDefaultsInConfig: numCustomDefaultsInConfig
+        prepareDefaultValues script: script, customDefaults: customDefaults, numCustomDefaultsInConfig: numCustomDefaultsInConfig
 
         //println("thats customDefaults in setupCPE")
         //println(customDefaults.toListString())
