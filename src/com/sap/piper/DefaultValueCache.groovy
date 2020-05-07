@@ -45,13 +45,13 @@ class DefaultValueCache implements Serializable {
         if(!DefaultValueCache.getInstance() || parameters.customDefaults) {
             def defaultValues = [:]
             List paramCustomDefaults = []
-            int customDefaultsInConfig = 0
+            int numCustomDefaultsInConfig = 0
 
             if (parameters.customDefaults){
                 paramCustomDefaults = parameters.customDefaults
 
                 if (parameters.numCustomDefaultsInConfig){
-                    customDefaultsInConfig = parameters.numCustomDefaultsInConfig
+                    numCustomDefaultsInConfig = parameters.numCustomDefaultsInConfig
                 }
             } else {
                 paramCustomDefaults = ['default_pipeline_environment.yml']
@@ -67,7 +67,7 @@ class DefaultValueCache implements Serializable {
 
                 // Only customDefaults not coming from project config are saved in customDefaults list, to not have duplicated customDefaults in getConfig Go step,
                 // since the go step considers the customDefaults defined in project config in addition to the via CLI provided list of customDefaults
-                if (i <= paramCustomDefaults.size()-1-customDefaultsInConfig){
+                if (i <= paramCustomDefaults.size()-1-numCustomDefaultsInConfig){
                     customDefaults.add(paramCustomDefaults[i])
                 }
                 defaultValues = MapUtils.merge(

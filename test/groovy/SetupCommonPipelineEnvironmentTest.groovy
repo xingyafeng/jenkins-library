@@ -1,3 +1,5 @@
+import com.sap.piper.variablesubstitution.YamlUtilsTest
+import org.codehaus.groovy.runtime.GStringImpl
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -98,6 +100,9 @@ class SetupCommonPipelineEnvironmentTest extends BasePiperTest {
                 case 'notFound.yml': return false
                 default: return true
             }
+        })
+        helper.registerAllowedMethod("handlePipelineStepErrors", [Map,Closure], { Map map, Closure closure ->
+            closure()
         })
 
         // Behavior documented here based on reality check

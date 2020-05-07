@@ -70,15 +70,16 @@ void call(Map parameters = [:]) {
                     customDefaults[i] = fileName
 
                 } else if (fileExists(customDefaults[i])) {
-                    //TODO: test if customDefaults[i] starts with ./ works with fileExists and works properly in general
+                    // copy files to .pipeline/ to make sure they are in the pipelineConfigAndTests stash
                     if (customDefaults[i].startsWith("./")){
                         println("its a file in workspace and starts with ./")
-                        writeYaml file: ".pipeline/${customDefaults[i].substring(2)}", data: readYaml(file: customDefaults[i])
+                        // TODO: test if cutting off ./ is necessary
+                        writeFile file: ".pipeline/${customDefaults[i].substring(2)}", text: readFile(file: customDefaults[i])
                         customDefaults[i] = customDefaults[i].substring(2)
                     }
                     else {
                         println("its a file in workspace")
-                        writeYaml file: ".pipeline/${customDefaults[i]}", data: readYaml(file: customDefaults[i])
+                        writeFile file: ".pipeline/${customDefaults[i]}", text: readFile(file: customDefaults[i])
                     }
                 } else {
                     println("should be a resource")
