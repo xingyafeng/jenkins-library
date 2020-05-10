@@ -1,0 +1,5 @@
+metadata:
+  name: pipeline
+  description: Generates files for running a pipeline
+  longDescription: |
+    Generates files for running a pipeline
