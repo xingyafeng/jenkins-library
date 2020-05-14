@@ -8,8 +8,9 @@ import static com.sap.piper.Prerequisites.checkScript
 
 void call(Map parameters = [:]) {
     final script = checkScript(this, parameters) ?: this
-    parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
+    handlePipelineStepErrors (stepName: STEP_NAME, stepParameters: parameters) {
 
-    piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, [])
-
+        parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
+        piperExecuteBin parameters, STEP_NAME, "metadata/${STEP_NAME}.yaml", []
+    }
 }
