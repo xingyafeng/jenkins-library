@@ -6,7 +6,7 @@ import groovy.transform.Field
 
 void call(Map parameters = [:]) {
     final script = checkScript(this, parameters) ?: this
-    parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
+    //parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
 
     piperExecuteBin parameters, STEP_NAME, "metadata/${STEP_NAME}.yaml", []
 }
