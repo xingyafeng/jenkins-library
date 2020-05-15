@@ -131,7 +131,7 @@ spec:
         params:
           - name: mtaBuildTool
             value: classic
-  - image: devxci/mbtci:1.0.10
+  - image: devxci/mbtci
     imagePullPolicy: Always
     conditions:
       - conditionRef: strings-equal
