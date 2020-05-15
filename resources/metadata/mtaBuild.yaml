@@ -89,6 +89,15 @@ spec:
         - STEPS
         mandatory: false
         default:
+      - name: sapNpmRegistry
+        type: string
+        description: "Url to the sap npm registry that should be used for installing npm dependencies prefixed with @sap."
+        scope:
+          - PARAMETERS
+          - STAGES
+          - STEPS
+        mandatory: false
+        default:
       - name: projectSettingsFile
         type: string
         description: "Path or url to the mvn settings file that should be used as project settings file."
