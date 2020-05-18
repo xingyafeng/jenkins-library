@@ -14,7 +14,7 @@ spec:
         - STAGES
         - STEPS
         mandatory: false
-        default:
+        default: NEO
         possibleValues:
           - CF
           - NEO
@@ -48,6 +48,7 @@ spec:
         - STAGES
         - STEPS
         mandatory: false
+        default: /opt/sap/mta/lib/mta.jar
       - name: extensions
         type: string
         description: "The path to the extension descriptor file."
