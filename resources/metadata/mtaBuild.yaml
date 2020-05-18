@@ -48,7 +48,6 @@ spec:
         - STAGES
         - STEPS
         mandatory: false
-        default:
       - name: extensions
         type: string
         description: "The path to the extension descriptor file."
