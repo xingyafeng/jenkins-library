@@ -8,8 +8,8 @@ import com.sap.piper.DownloadCacheUtils
 void call(Map parameters = [:]) {
     final script = checkScript(this, parameters) ?: this
     parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
-    
+
     parameters['dockerOptions'] = DownloadCacheUtils.getDockerOptions(script)
-    piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, [])
+    piperExecuteBin parameters, STEP_NAME, METADATA_FILE, []
 }
 
