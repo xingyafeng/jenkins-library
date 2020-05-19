@@ -1,6 +1,6 @@
-import com.sap.piper.DownloadCacheUtils
-import static com.sap.piper.Prerequisites.checkScript
 import groovy.transform.Field
+import static com.sap.piper.Prerequisites.checkScript
+import com.sap.piper.DownloadCacheUtils
 
 @Field String STEP_NAME = getClass().getName()
 @Field String METADATA_FILE = 'metadata/mtaBuild.yaml'
@@ -8,7 +8,8 @@ import groovy.transform.Field
 void call(Map parameters = [:]) {
     final script = checkScript(this, parameters) ?: this
     parameters = DownloadCacheUtils.injectDownloadCacheInMavenParameters(script, parameters)
-
+    
+    parameters['dockerOptions'] = DownloadCacheUtils.getDockerOptions(script)
     piperExecuteBin(parameters, STEP_NAME, METADATA_FILE, [])
 }
 

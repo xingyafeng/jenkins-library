@@ -84,9 +84,18 @@ spec:
         type: string
         description: "Url to the npm registry that should be used for installing npm dependencies."
         scope:
-        - PARAMETERS
-        - STAGES
-        - STEPS
+          - PARAMETERS
+          - STAGES
+          - STEPS
+        mandatory: false
+        default:
+      - name: sapNpmRegistry
+        type: string
+        description: "Url to the sap npm registry that should be used for installing npm dependencies prefixed with @sap."
+        scope:
+          - PARAMETERS
+          - STAGES
+          - STEPS
         mandatory: false
         default:
       - name: sapNpmRegistry
@@ -125,16 +134,16 @@ spec:
             fields:
               - name: mtarFilePath
   containers:
-  - image: ppiper/mta-archive-builder
-    conditions:
-      - conditionRef: strings-equal
-        params:
-          - name: mtaBuildTool
-            value: classic
-  - image: devxci/mbtci
-    imagePullPolicy: Always
-    conditions:
-      - conditionRef: strings-equal
-        params:
-          - name: mtaBuildTool
-            value: cloudMbt
+    - image: ppiper/mta-archive-builder
+      conditions:
+        - conditionRef: strings-equal
+          params:
+            - name: mtaBuildTool
+              value: classic
+    - image: devxci/mbtci
+      imagePullPolicy: Always
+      conditions:
+        - conditionRef: strings-equal
+          params:
+            - name: mtaBuildTool
+              value: cloudMbt
