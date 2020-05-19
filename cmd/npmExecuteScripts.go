@@ -43,11 +43,10 @@ func (u *npmExecuteScriptsUtilsBundle) chdir(dir string) error {
 }
 
 func (u *npmExecuteScriptsUtilsBundle) getExecRunner() execRunner {
-	if u.execRunner == nil {
-		u.execRunner = &command.Command{}
-		u.execRunner.Stdout(log.Writer())
-		u.execRunner.Stderr(log.Writer())
-	}
+	// Always create a new runner on purpose to avoid state between multiple executions in directories
+	u.execRunner = &command.Command{}
+	u.execRunner.Stdout(log.Writer())
+	u.execRunner.Stderr(log.Writer())
 	return u.execRunner
 }
 
@@ -60,7 +59,7 @@ func npmExecuteScripts(config npmExecuteScriptsOptions, telemetryData *telemetry
 	}
 }
 func runNpmExecuteScripts(utils npmExecuteScriptsUtilsInterface, options *npmExecuteScriptsOptions) error {
-	execRunner := utils.getExecRunner()
+
 	packageJSONFiles, err := findPackageJSONFiles(utils)
 	if err != nil {
 		return err
@@ -72,6 +71,7 @@ func runNpmExecuteScripts(utils npmExecuteScriptsUtilsInterface, options *npmExe
 	}
 
 	for _, file := range packageJSONFiles {
+		execRunner := utils.getExecRunner()
 		dir := path.Dir(file)
 		err = utils.chdir(dir)
 		if err != nil {

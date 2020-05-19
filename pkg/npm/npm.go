@@ -15,15 +15,16 @@ type RegistryOptions struct {
 
 type execRunner interface {
 	Stdout(out io.Writer)
+	SetEnv(envVars []string)
 	RunExecutable(executable string, params ...string) error
 }
 
 // SetNpmRegistries configures the given npm registries.
-// CAUTION: This will change the npm configuration in the user's home directory.
 func SetNpmRegistries(options *RegistryOptions, execRunner execRunner) error {
 	const sapRegistry = "@sap:registry"
 	const npmRegistry = "registry"
 	configurableRegistries := []string{npmRegistry, sapRegistry}
+	environment := []string{}
 	for _, registry := range configurableRegistries {
 		var buffer bytes.Buffer
 		execRunner.Stdout(&buffer)
@@ -40,21 +41,17 @@ func SetNpmRegistries(options *RegistryOptions, execRunner execRunner) error {
 
 		if registry == npmRegistry && options.DefaultNpmRegistry != "" && registryRequiresConfiguration(preConfiguredRegistry, "https://registry.npmjs.org") {
 			log.Entry().Info("npm registry " + registry + " was not configured, setting it to " + options.DefaultNpmRegistry)
-			err = execRunner.RunExecutable("npm", "config", "set", registry, options.DefaultNpmRegistry)
-			if err != nil {
-				return err
-			}
+			environment = append(environment, "npm_config_"+registry+"="+options.DefaultNpmRegistry)
 		}
 
 		if registry == sapRegistry && registryRequiresConfiguration(preConfiguredRegistry, "https://npm.sap.com") {
 			log.Entry().Info("npm registry " + registry + " was not configured, setting it to " + options.SapNpmRegistry)
-			err = execRunner.RunExecutable("npm", "config", "set", registry, options.SapNpmRegistry)
-			if err != nil {
-				return err
-			}
+			environment = append(environment, "npm_config_"+registry+"="+options.SapNpmRegistry)
 		}
 	}
 
+	log.Entry().Info("Setting environment: " + strings.Join(environment, ", "))
+	execRunner.SetEnv(environment)
 	return nil
 }
 
