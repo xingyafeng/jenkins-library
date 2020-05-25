@@ -507,12 +507,7 @@ func triggerFortifyScan(config fortifyExecuteScanOptions, command execRunner, bu
 		if config.AutodetectClasspath {
 			classpath = autoresolveMavenClasspath(config.BuildDescriptorFile, classpathFileName, command)
 		}
-		if len(config.Translate) == 0 {
-			translate := `[{"classpath":"`
-			translate += classpath
-			translate += `","src":"**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*"}]`
-			config.Translate = translate
-		}
+		populateMavenTranslate(config, classpath)
 	}
 	if config.BuildTool == "pip" {
 		if config.AutodetectClasspath {
@@ -545,6 +540,31 @@ func triggerFortifyScan(config fortifyExecuteScanOptions, command execRunner, bu
 	translateProject(&config, command, buildID, classpath)
 
 	scanProject(&config, command, buildID, buildLabel)
+}
+
+func populateMavenTranslate(config fortifyExecuteScanOptions, classpath string) {
+	if len(config.Translate) == 0 {
+		src := ""
+		exclude := ""
+		if len(config.Src) > 0 {
+			src = config.Src
+		} else {
+			src = "**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*"
+		}
+		translate := `[{"classpath":"`
+		translate += classpath
+		translate += `","src":"`
+		translate += src
+		translate += `"`
+		if len(config.Exclude) > 0 {
+			exclude = config.Exclude
+			translate += `,"exclude":"`
+			translate += exclude
+			translate += `"`
+		}
+		translate += `}]`
+		config.Translate = translate
+	}
 }
 
 func translateProject(config *fortifyExecuteScanOptions, command execRunner, buildID, classpath string) {
