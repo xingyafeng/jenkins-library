@@ -507,7 +507,7 @@ func triggerFortifyScan(config fortifyExecuteScanOptions, command execRunner, bu
 		if config.AutodetectClasspath {
 			classpath = autoresolveMavenClasspath(config.BuildDescriptorFile, classpathFileName, command)
 		}
-		populateMavenTranslate(config, classpath)
+		populateMavenTranslate(&config, classpath)
 	}
 	if config.BuildTool == "pip" {
 		if config.AutodetectClasspath {
@@ -542,7 +542,8 @@ func triggerFortifyScan(config fortifyExecuteScanOptions, command execRunner, bu
 	scanProject(&config, command, buildID, buildLabel)
 }
 
-func populateMavenTranslate(config fortifyExecuteScanOptions, classpath string) {
+func populateMavenTranslate(config *fortifyExecuteScanOptions, classpath string) error {
+
 	if len(config.Translate) == 0 {
 		src := ""
 		exclude := ""
@@ -564,7 +565,31 @@ func populateMavenTranslate(config fortifyExecuteScanOptions, classpath string) 
 		}
 		translate += `}]`
 		config.Translate = translate
+	} else {
+		var translateList []map[string]interface{}
+		err := json.Unmarshal([]byte(config.Translate), &translateList)
+		if err != nil {
+			return err
+		}
+		if len(config.Src) > 0 {
+			translateList[0]["src"] = config.Src
+		}
+		if len(config.Exclude) > 0 {
+			translateList[0]["exclude"] = config.Exclude
+		}
+		translateJson, _ := json.Marshal(translateList)
+		config.Translate = string(translateJson)
+
+
+
+		//var result map[string]interface{}
+
+		//err := json.Unmarshal([]byte(resultTemp[0]), &result)
+		//if err != nil {
+		//	return err
+		//}
 	}
+	return nil
 }
 
 func translateProject(config *fortifyExecuteScanOptions, command execRunner, buildID, classpath string) {
