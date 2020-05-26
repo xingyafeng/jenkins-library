@@ -546,13 +546,13 @@ func populateMavenTranslate(config *fortifyExecuteScanOptions, classpath string)
 	// TODO: handle error
 	var translateList []map[string]interface{}
 	if len(config.Translate) == 0 {
-		translateList[0] = 
+		translateList = append(translateList, make(map[string]interface{}))
 		translateList[0]["classpath"] = classpath
 
 		if len(config.Src) > 0 {
 			translateList[0]["src"] = config.Src
 		} else {
-			translateList[0]["src"]  = "**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*"
+			translateList[0]["src"] = "**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*"
 		}
 		if len(config.Exclude) > 0 {
 			translateList[0]["exclude"] = config.Exclude
