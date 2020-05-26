@@ -579,15 +579,6 @@ func populateMavenTranslate(config *fortifyExecuteScanOptions, classpath string)
 		}
 		translateJson, _ := json.Marshal(translateList)
 		config.Translate = string(translateJson)
-
-
-
-		//var result map[string]interface{}
-
-		//err := json.Unmarshal([]byte(resultTemp[0]), &result)
-		//if err != nil {
-		//	return err
-		//}
 	}
 	return nil
 }
