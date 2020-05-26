@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v28/github"
+	"github.com/google/go-github/v31/github"
 	"github.com/google/uuid"
 
 	"github.com/piper-validation/fortify-client-go/models"
@@ -204,12 +204,7 @@ func getIssueDeltaFor(config fortifyExecuteScanOptions, sys fortify.System, issu
 	groupTotalMinusAuditedDelta := total - audited
 	if groupTotalMinusAuditedDelta > 0 {
 		reducedFilterSelectorSet := sys.ReduceIssueFilterSelectorSet(issueFilterSelectorSet, []string{"Folder", "Analysis"}, []string{group})
-		folderSelector := sys.GetFilterSetByDisplayName(reducedFilterSelectorSet, "Folder")
-		if folderSelector == nil {
-			log.Entry().Fatal("folder selector not found")
-		}
-		analysisSelector := sys.GetFilterSetByDisplayName(reducedFilterSelectorSet, "Analysis")
-
+		log.Entry().Debugf("reduced filters resulted in %v", reducedFilterSelectorSet)
 		auditStatus[group] = fmt.Sprintf("%v total : %v audited", total, audited)
 
 		if strings.Contains(config.MustAuditIssueGroups, group) {
@@ -223,12 +218,16 @@ func getIssueDeltaFor(config fortifyExecuteScanOptions, sys fortify.System, issu
 				influx.fortify_data.fields.auditAllAudited = fmt.Sprintf("%v", audited)
 			}
 			log.Entry().Errorf("[projectVersionId %v]: Unaudited %v detected, count %v", projectVersionID, group, totalMinusAuditedDelta)
-			logIssueURL(config, projectVersionID, folderSelector, analysisSelector)
+			logUnauditedIssuesURL(config, projectVersionID, reducedFilterSelectorSet)
 		}
 
 		if strings.Contains(config.SpotAuditIssueGroups, group) {
 			log.Entry().Infof("Analyzing %v", config.SpotAuditIssueGroups)
-			filter := fmt.Sprintf("%v:%v", folderSelector.EntityType, folderSelector.SelectorOptions[0].Value)
+			filterSelector := sys.GetFilterSetByDisplayName(reducedFilterSelectorSet, "Folder")
+			if filterSelector == nil {
+				log.Entry().Fatal("folder selector not found")
+			}
+			filter := fmt.Sprintf("%v:%v", filterSelector.EntityType, filterSelector.SelectorOptions[0].GUID)
 			fetchedIssueGroups, err := sys.GetProjectIssuesByIDAndFilterSetGroupedBySelector(projectVersionID, filter, filterSet.GUID, sys.ReduceIssueFilterSelectorSet(issueFilterSelectorSet, []string{"Category"}, nil))
 			if err != nil {
 				log.Entry().WithError(err).Fatalf("Failed to fetch project version issue groups with filter %v, filter set %v and selector %v for project version ID %v", filter, filterSet, issueFilterSelectorSet, projectVersionID)
@@ -264,7 +263,7 @@ func getSpotIssueCount(config fortifyExecuteScanOptions, sys fortify.System, spo
 				filterSelectorAnalysis := sys.GetFilterSetByDisplayName(issueFilterSelectorSet, "Analysis")
 				overallDelta += currentDelta
 				log.Entry().Errorf("[projectVersionId %v]: %v unaudited spot check issues detected in group %v", projectVersionID, currentDelta, group)
-				logIssueURL(config, projectVersionID, filterSelectorFolder, filterSelectorAnalysis)
+				log.Entry().Errorf("%v/html/ssc/index.jsp#!/version/%v/fix?issueFilters=%v_%v:%v&issueFilters=%v_%v:", config.ServerURL, projectVersionID, filterSelectorFolder.EntityType, filterSelectorFolder.GUID, filterSelectorFolder.SelectorOptions[0].GUID, filterSelectorAnalysis.EntityType, filterSelectorAnalysis.GUID)
 				flagOutput = checkString
 			}
 		}
@@ -301,7 +300,7 @@ func analyseSuspiciousExploitable(config fortifyExecuteScanOptions, sys fortify.
 	if (suspiciousCount > 0 && config.ConsiderSuspicious) || exploitableCount > 0 {
 		result = result + suspiciousCount + exploitableCount
 		log.Entry().Errorf("[projectVersionId %v]: %v suspicious and %v exploitable issues detected", projectVersion.ID, suspiciousCount, exploitableCount)
-		log.Entry().Errorf("%v/html/ssc/index.jsp#!/version/%v/fix?issueGrouping=%v_%v&issueFilters=%v_%v", config.ServerURL, projectVersion.ID, reducedFilterSelectorSet.GroupBySet[0].EntityType, reducedFilterSelectorSet.GroupBySet[0].Value, reducedFilterSelectorSet.FilterBySet[0].EntityType, reducedFilterSelectorSet.FilterBySet[0].Value)
+		log.Entry().Errorf("%v/html/ssc/index.jsp#!/version/%v/fix?issueGrouping=%v_%v&issueFilters=%v_%v", config.ServerURL, projectVersion.ID, reducedFilterSelectorSet.GroupBySet[0].EntityType, reducedFilterSelectorSet.GroupBySet[0].GUID, reducedFilterSelectorSet.FilterBySet[0].EntityType, reducedFilterSelectorSet.FilterBySet[0].GUID)
 	}
 	issueStatistics, err := sys.GetIssueStatisticsOfProjectVersion(projectVersion.ID)
 	if err != nil {
@@ -320,20 +319,20 @@ func analyseSuspiciousExploitable(config fortifyExecuteScanOptions, sys fortify.
 	return result
 }
 
-func logIssueURL(config fortifyExecuteScanOptions, projectVersionID int64, folderSelector, analysisSelector *models.IssueFilterSelector) {
-	url := fmt.Sprintf("%v/html/ssc/index.jsp#!/version/%v/fix", config.ServerURL, projectVersionID)
-	if len(folderSelector.SelectorOptions) > 0 {
-		url += fmt.Sprintf("?issueFilters=%v_%v:%v",
-			folderSelector.EntityType,
-			folderSelector.Value,
-			folderSelector.SelectorOptions[0].Value)
+func logUnauditedIssuesURL(config fortifyExecuteScanOptions, projectVersionID int64, reducedFilterSelectorSet *models.IssueFilterSelectorSet) {
+	url := fmt.Sprintf("%v/html/ssc/index.jsp#!/version/%v", config.ServerURL, projectVersionID)
+	if len(reducedFilterSelectorSet.FilterBySet) > 0 && len(reducedFilterSelectorSet.FilterBySet[0].SelectorOptions) > 0 {
+		url += fmt.Sprintf("/fix?issueFilters=%v_%v:%v",
+			reducedFilterSelectorSet.FilterBySet[0].EntityType,
+			reducedFilterSelectorSet.FilterBySet[0].Value,
+			reducedFilterSelectorSet.FilterBySet[0].SelectorOptions[0].GUID)
 	} else {
 		log.Entry().Debugf("no 'filter by set' array entries")
 	}
-	if analysisSelector != nil {
+	if len(reducedFilterSelectorSet.FilterBySet) > 1 {
 		url += fmt.Sprintf("&issueFilters=%v_%v:",
-			analysisSelector.EntityType,
-			analysisSelector.Value)
+			reducedFilterSelectorSet.FilterBySet[1].EntityType,
+			reducedFilterSelectorSet.FilterBySet[1].Value)
 	} else {
 		log.Entry().Debugf("no second entry in 'filter by set' array")
 	}
@@ -508,12 +507,7 @@ func triggerFortifyScan(config fortifyExecuteScanOptions, command execRunner, bu
 		if config.AutodetectClasspath {
 			classpath = autoresolveMavenClasspath(config.BuildDescriptorFile, classpathFileName, command)
 		}
-		if len(config.Translate) == 0 {
-			translate := `[{"classpath":"`
-			translate += classpath
-			translate += `","src":"**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*"}]`
-			config.Translate = translate
-		}
+		populateMavenTranslate(&config, classpath)
 	}
 	if config.BuildTool == "pip" {
 		if config.AutodetectClasspath {
@@ -546,6 +540,38 @@ func triggerFortifyScan(config fortifyExecuteScanOptions, command execRunner, bu
 	translateProject(&config, command, buildID, classpath)
 
 	scanProject(&config, command, buildID, buildLabel)
+}
+
+func populateMavenTranslate(config *fortifyExecuteScanOptions, classpath string) error {
+	// TODO: handle error
+	var translateList []map[string]interface{}
+	if len(config.Translate) == 0 {
+		translateList[0] = 
+		translateList[0]["classpath"] = classpath
+
+		if len(config.Src) > 0 {
+			translateList[0]["src"] = config.Src
+		} else {
+			translateList[0]["src"]  = "**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*"
+		}
+		if len(config.Exclude) > 0 {
+			translateList[0]["exclude"] = config.Exclude
+		}
+	} else {
+		err := json.Unmarshal([]byte(config.Translate), &translateList)
+		if err != nil {
+			return err
+		}
+		if len(config.Src) > 0 {
+			translateList[0]["src"] = config.Src
+		}
+		if len(config.Exclude) > 0 {
+			translateList[0]["exclude"] = config.Exclude
+		}
+	}
+	translateJson, _ := json.Marshal(translateList)
+	config.Translate = string(translateJson)
+	return nil
 }
 
 func translateProject(config *fortifyExecuteScanOptions, command execRunner, buildID, classpath string) {

@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/google/go-github/v28/github"
+	"github.com/google/go-github/v31/github"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/piper-validation/fortify-client-go/models"
@@ -254,6 +254,23 @@ func TestParametersAreValidated(t *testing.T) {
 			config:        fortifyExecuteScanOptions{},
 			expectedError: "unable to get artifact from descriptor : build tool '' not supported",
 		},
+		{
+			nameOfRun: "no owner",
+			config: fortifyExecuteScanOptions{
+				BuildTool: "maven",
+			},
+			expectedError: "GitHub organization was not specified via parameter 'owner' and it could not be retried from resources",
+		},
+		//{
+		//	nameOfRun: "no ???", // TODO: Find code-spot and improve error message
+		//	config: fortifyExecuteScanOptions{
+		//		BuildTool:  "maven",
+		//		Owner:      "repo-owner",
+		//		Repository: "some-project",
+		//		CommitID:   "idOfCommit",
+		//	},
+		//	expectedError: "No uploaded artifacts for assessment detected for project version with ID 0",
+		//},
 	}
 
 	for _, data := range testData {
@@ -317,7 +334,7 @@ func TestAnalyseUnauditedIssues(t *testing.T) {
 				EntityType:  "ET1",
 				SelectorOptions: []*models.SelectorOption{
 					{
-						Value: "abcd",
+						GUID: "abcd",
 					},
 				},
 			},
@@ -325,21 +342,6 @@ func TestAnalyseUnauditedIssues(t *testing.T) {
 				GUID:        "2",
 				DisplayName: "Category",
 				EntityType:  "ET2",
-				SelectorOptions: []*models.SelectorOption{
-					{
-						Value: "abcd",
-					},
-				},
-			},
-			{
-				GUID:        "3",
-				DisplayName: "Analysis",
-				EntityType:  "ET3",
-				SelectorOptions: []*models.SelectorOption{
-					{
-						Value: "abcd",
-					},
-				},
 			},
 		},
 	}
@@ -608,5 +610,36 @@ func TestAutoresolveClasspath(t *testing.T) {
 		assert.Equal(t, "mvn", execRunner.executions[0].executable, "Expected different executable")
 		assert.Equal(t, []string{"--file", "pom.xml", fmt.Sprintf("-Dmdep.outputFile=%v", file), "-DincludeScope=compile", "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn", "--batch-mode", "dependency:build-classpath"}, execRunner.executions[0].parameters, "Expected different parameters")
 		assert.Equal(t, "some.jar;someother.jar", result, "Expected different result")
+	})
+}
+
+func TestPopulateMavenTranslate(t *testing.T) {
+	// TODO: adjust exclude (order of expected string)
+	t.Run("src without translate", func(t *testing.T) {
+		config := fortifyExecuteScanOptions{BuildTool: "maven", Memory: "-Xmx2G", Src: "./**/*"}
+		err :=populateMavenTranslate(&config, "")
+		assert.NoError(t,err)
+		assert.Equal(t, `[{"classpath":"","src":"./**/*"}]`, config.Translate, "Expected different parameters")
+	})
+
+	t.Run("exclude without translate", func(t *testing.T) {
+		config := fortifyExecuteScanOptions{BuildTool: "maven", Memory: "-Xmx2G", Exclude: "./**/*"}
+		err :=populateMavenTranslate(&config, "")
+		assert.NoError(t,err)
+		assert.Equal(t, `[{"classpath":"","src":"**/*.xml **/*.html **/*.jsp **/*.js src/main/resources/**/* src/main/java/**/*","exclude":"./**/*"}]`, config.Translate, "Expected different parameters")
+	})
+
+	t.Run("src with translate", func(t *testing.T) {
+		config := fortifyExecuteScanOptions{BuildTool: "maven", Memory: "-Xmx2G", Translate: `[{"classpath":"./classes/*.jar","extdirs":"tmp/","jdk":"1.8.0-21","source":"1.8","sourcepath":"src/ext/"}]`, Src: "./**/*"}
+		err :=populateMavenTranslate(&config, "")
+		assert.NoError(t,err)
+		assert.Equal(t, `[{"classpath":"./classes/*.jar","extdirs":"tmp/","jdk":"1.8.0-21","source":"1.8","sourcepath":"src/ext/","src":"./**/*"}]`, config.Translate, "Expected different parameters")
+	})
+
+	t.Run("exclude with translate", func(t *testing.T) {
+		config := fortifyExecuteScanOptions{BuildTool: "maven", Memory: "-Xmx2G", Translate: `[{"classpath":"./classes/*.jar","extdirs":"tmp/","jdk":"1.8.0-21","source":"1.8","sourcepath":"src/ext/"}]`, Exclude: "./**/*"}
+		err := populateMavenTranslate(&config, "")
+		assert.NoError(t,err)
+		assert.Equal(t, `[{"classpath":"./classes/*.jar","exclude":"./**/*","extdirs":"tmp/","jdk":"1.8.0-21","source":"1.8","sourcepath":"src/ext/"}]`, config.Translate, "Expected different parameters")
 	})
 }
