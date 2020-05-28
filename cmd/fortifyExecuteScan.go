@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -66,9 +67,29 @@ func runFortifyScan(config fortifyExecuteScanOptions, sys fortify.System, comman
 	if err != nil {
 		return fmt.Errorf("Failed to load project %v: %w", fortifyProjectName, err)
 	}
-	projectVersion, err := sys.GetProjectVersionDetailsByProjectIDAndVersionName(project.ID, fortifyProjectVersion, config.AutoCreate, fortifyProjectName)
-	if err != nil {
-		return fmt.Errorf("Failed to load project version %v: %w", fortifyProjectVersion, err)
+	var projectVersion *models.ProjectVersion
+	if config.ProjectVersionID != "" {
+		projectVersionID, err := strconv.ParseInt(config.ProjectVersionID, 10, 0)
+		if err != nil {
+			return fmt.Errorf("projectVersionId is not a valid integer: %w", err)
+		}
+		projectVersion, err = sys.GetProjectVersionDetailsByID(projectVersionID)
+		if err != nil {
+			return fmt.Errorf("failed to load project version by ID %v: %w", projectVersionID, err)
+		}
+		if *projectVersion.Name != fortifyProjectVersion {
+			log.Entry().Debugf("Updating project-version name with current version '%v'", fortifyProjectVersion)
+			projectVersion.Name = &fortifyProjectVersion
+			projectVersion, err = sys.UpdateProjectVersionDetails(projectVersion.ID, projectVersion)
+			if err != nil {
+				return fmt.Errorf("failed to update project version with ID %v with name '%v': %w", projectVersionID, fortifyProjectVersion, err)
+			}
+		}
+	} else {
+		projectVersion, err = sys.GetProjectVersionDetailsByProjectIDAndVersionName(project.ID, fortifyProjectVersion, config.AutoCreate, fortifyProjectName)
+		if err != nil {
+			return fmt.Errorf("failed to load project version %v: %w", fortifyProjectVersion, err)
+		}
 	}
 
 	if len(config.PullRequestName) > 0 {

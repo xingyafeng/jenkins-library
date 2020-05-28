@@ -50,6 +50,7 @@ type fortifyExecuteScanOptions struct {
 	ConsiderSuspicious              bool   `json:"considerSuspicious,omitempty"`
 	FprUploadEndpoint               string `json:"fprUploadEndpoint,omitempty"`
 	ProjectName                     string `json:"projectName,omitempty"`
+	ProjectVersionID                string `json:"projectVersionId,omitempty"`
 	PythonIncludes                  string `json:"pythonIncludes,omitempty"`
 	Reporting                       bool   `json:"reporting,omitempty"`
 	ServerURL                       string `json:"serverUrl,omitempty"`
@@ -219,11 +220,12 @@ func addFortifyExecuteScanFlags(cmd *cobra.Command, stepConfig *fortifyExecuteSc
 	cmd.Flags().StringVar(&stepConfig.Exclude, "exclude", os.Getenv("PIPER_exclude"), "Exludes directories/files from scan. Multiple entries are separated by semicolon and wildcards can be used, e.g., `'fileA;fileB;**/Test.java;'`. If `translate` is set, this will ignored.")
 	cmd.Flags().StringVar(&stepConfig.APIEndpoint, "apiEndpoint", `/api/v1`, "Fortify SSC endpoint used for uploading the scan results and checking the audit state")
 	cmd.Flags().StringVar(&stepConfig.ReportType, "reportType", `PDF`, "The type of report to be generated")
-	cmd.Flags().StringVar(&stepConfig.PythonAdditionalPath, "pythonAdditionalPath", `./lib;.`, "The addional path which can be used in `buildTool: 'pip'` for customization purposes")
+	cmd.Flags().StringVar(&stepConfig.PythonAdditionalPath, "pythonAdditionalPath", `./lib;.`, "The additional path which can be used in `buildTool: 'pip'` for customization purposes")
 	cmd.Flags().StringVar(&stepConfig.ArtifactURL, "artifactUrl", os.Getenv("PIPER_artifactUrl"), "Path/Url pointing to an additional artifact repository for resolution of additional artifacts during the build")
 	cmd.Flags().BoolVar(&stepConfig.ConsiderSuspicious, "considerSuspicious", true, "Whether suspicious issues should trigger the check to fail or not")
 	cmd.Flags().StringVar(&stepConfig.FprUploadEndpoint, "fprUploadEndpoint", `/upload/resultFileUpload.html`, "Fortify SSC endpoint for FPR uploads")
 	cmd.Flags().StringVar(&stepConfig.ProjectName, "projectName", `{{list .GroupID .ArtifactID | join "-" | trimAll "-"}}`, "The project used for reporting results in SSC")
+	cmd.Flags().StringVar(&stepConfig.ProjectVersionID, "projectVersionId", os.Getenv("PIPER_projectVersionId"), "ID of your project version in Fortify. If this parameter is provided, the scan results are uploaded to this project version and its name is updated with the current version from the versioning scheme.")
 	cmd.Flags().StringVar(&stepConfig.PythonIncludes, "pythonIncludes", `./**/*`, "The includes pattern used in `buildTool: 'pip'` for including .py files")
 	cmd.Flags().BoolVar(&stepConfig.Reporting, "reporting", false, "Influences whether a report is generated or not")
 	cmd.Flags().StringVar(&stepConfig.ServerURL, "serverUrl", os.Getenv("PIPER_serverUrl"), "Fortify SSC Url to be used for accessing the APIs")
@@ -527,6 +529,14 @@ func fortifyExecuteScanMetadata() config.StepData {
 						Type:        "string",
 						Mandatory:   false,
 						Aliases:     []config.Alias{{Name: "fortifyProjectName"}},
+					},
+					{
+						Name:        "projectVersionId",
+						ResourceRef: []config.ResourceReference{},
+						Scope:       []string{"PARAMETERS", "STAGES", "STEPS"},
+						Type:        "string",
+						Mandatory:   false,
+						Aliases:     []config.Alias{},
 					},
 					{
 						Name:        "pythonIncludes",
