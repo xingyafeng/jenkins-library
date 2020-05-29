@@ -1,0 +1,18 @@
+name: Go
+
+on:
+  push:
+    branches:
+    - CCFenner/goweight
+
+jobs:
+  goweight:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/setup-go@v1
+      with:
+        go-version: '1.13.x'
+    - run: go get github.com/jondot/goweight
+    - uses: actions/checkout@v2
+    - name: goweight
+      run: goweight
