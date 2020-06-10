@@ -34,7 +34,7 @@ func TestMavenProject(t *testing.T) {
 	//workaround to use test script util it is possible to set workdir for Exec call
 	testScript := `#!/bin/sh
 cd /test
-/piperbin/piper mtaBuild >test-log.txt 2>&1
+ls -h /piperbin >test-log.txt 2>&1
 `
 	ioutil.WriteFile(filepath.Join(tempDir, "runPiper.sh"), []byte(testScript), 0700)
 
